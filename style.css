@@ -53,7 +53,7 @@
 
   /* --- Typography --- */
   /* Body + UI:     DM Sans     — clean, modern sans-serif                */
-  /* Titles/heads:  Playfair Display — editorial serif                    */
+  /* Titles/heads:  Inter — editorial serif                    */
   /* Mono/labels:   DM Mono     — code, badges, metadata                  */
   --font-body:    'DM Sans', sans-serif;
   --font-serif: 'Inter', sans-serif;
