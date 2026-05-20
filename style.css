@@ -56,7 +56,7 @@
   /* Titles/heads:  Playfair Display — editorial serif                    */
   /* Mono/labels:   DM Mono     — code, badges, metadata                  */
   --font-body:    'DM Sans', sans-serif;
-  --font-serif:   'Playfair Display', serif;
+  --font-serif: 'Philosopher', serif;
   --font-mono:    'DM Mono', monospace;
   --font-size-base: 15px;
 }
