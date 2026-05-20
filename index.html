@@ -3,1021 +3,277 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Library</title>
+<title>Lenses</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --ink: #1a1814;
-    --paper: #f5f0e8;
-    --paper-dark: #ede8dc;
-    --paper-darker: #e0d9cc;
-    --accent: #c0392b;
-    --accent-soft: #e8d5d2;
-    --gold: #a07840;
-    --muted: #7a7060;
-    --border: #c8bfaa;
-    --card-bg: #faf7f2;
-    --shadow: rgba(26,24,20,0.12);
-    --tag-bg: #e8e0d0;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--paper);
-    color: var(--ink);
-    min-height: 100vh;
-    font-size: 15px;
-  }
-
-  /* ── LAYOUT ── */
-  #app { display: flex; height: 100vh; overflow: hidden; }
-
-  /* SIDEBAR */
-  #sidebar {
-    width: 220px;
-    min-width: 220px;
-    background: var(--ink);
-    color: var(--paper);
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-    overflow-y: auto;
-    z-index: 10;
-  }
-
-  #sidebar-header {
-    padding: 28px 20px 20px;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-  }
-
-  #sidebar-header h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 22px;
-    letter-spacing: 0.02em;
-    color: var(--paper);
-  }
-
-  #sidebar-header p {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    margin-top: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-  }
-
-  .sidebar-section {
-    padding: 16px 20px 8px;
-  }
-
-  .sidebar-section-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: rgba(255,255,255,0.3);
-    margin-bottom: 8px;
-  }
-
-  .sidebar-nav-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 13.5px;
-    color: rgba(255,255,255,0.7);
-    transition: all 0.15s;
-    margin-bottom: 2px;
-  }
-
-  .sidebar-nav-item:hover { background: rgba(255,255,255,0.07); color: var(--paper); }
-  .sidebar-nav-item.active { background: var(--accent); color: white; }
-  .sidebar-nav-item .nav-icon { font-size: 14px; width: 18px; text-align: center; }
-  .sidebar-nav-item .nav-count {
-    margin-left: auto;
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    color: rgba(255,255,255,0.3);
-  }
-
-  #sidebar-categories {
-    padding: 0 20px 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .cat-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 12.5px;
-    color: rgba(255,255,255,0.6);
-    transition: all 0.15s;
-  }
-
-  .cat-item:hover { background: rgba(255,255,255,0.07); color: var(--paper); }
-  .cat-item.active { background: rgba(255,255,255,0.12); color: white; }
-
-  .cat-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
-  #add-category-btn {
-    margin: 8px 20px;
-    padding: 6px 10px;
-    background: transparent;
-    border: 1px dashed rgba(255,255,255,0.2);
-    border-radius: 6px;
-    color: rgba(255,255,255,0.35);
-    font-size: 12px;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    transition: all 0.15s;
-    text-align: left;
-  }
-
-  #add-category-btn:hover { border-color: rgba(255,255,255,0.4); color: rgba(255,255,255,0.6); }
-
-  #sidebar-footer {
-    margin-top: auto;
-    padding: 16px 20px;
-    border-top: 1px solid rgba(255,255,255,0.08);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .sidebar-new-btn {
-    width: 100%;
-    padding: 10px 14px;
-    background: var(--accent);
-    border: none;
-    border-radius: 8px;
-    color: white;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13.5px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.15s;
-    text-align: center;
-    margin-bottom: 4px;
-  }
-
-  .sidebar-new-btn:hover { background: #a93226; }
-
-  .sidebar-footer-btn {
-    padding: 7px 10px;
-    background: rgba(255,255,255,0.06);
-    border: none;
-    border-radius: 6px;
-    color: rgba(255,255,255,0.6);
-    font-size: 12px;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    transition: all 0.15s;
-    text-align: left;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .sidebar-footer-btn:hover { background: rgba(255,255,255,0.12); color: white; }
-
-  /* MAIN */
-  #main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  /* TOPBAR */
-  #topbar {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 16px 28px;
-    background: var(--paper);
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-  }
-
-  #topbar h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 20px;
-    font-weight: 400;
-    flex: 1;
-  }
-
-  #search-box {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--paper-dark);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 7px 14px;
-    width: 260px;
-  }
-
-  #search-box input {
-    border: none;
-    background: transparent;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13.5px;
-    color: var(--ink);
-    outline: none;
-    width: 100%;
-  }
-
-  #search-box input::placeholder { color: var(--muted); }
-
-  .sort-select {
-    border: 1px solid var(--border);
-    background: var(--paper-dark);
-    border-radius: 8px;
-    padding: 7px 12px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    color: var(--ink);
-    outline: none;
-    cursor: pointer;
-  }
-
-  .view-toggle {
-    display: flex;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
-  }
-
-  .view-btn {
-    padding: 7px 12px;
-    background: var(--paper-dark);
-    border: none;
-    cursor: pointer;
-    font-size: 14px;
-    color: var(--muted);
-    transition: all 0.15s;
-    border-right: 1px solid var(--border);
-  }
-
-  .view-btn:last-child { border-right: none; }
-  .view-btn.active { background: var(--ink); color: var(--paper); }
-
-  #new-piece-btn {
-    padding: 8px 18px;
-    background: var(--accent);
-    border: none;
-    border-radius: 8px;
-    color: white;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13.5px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.15s;
-    white-space: nowrap;
-  }
-
-  #new-piece-btn:hover { background: #a93226; }
-
-  /* CONTENT AREA */
-  #content-area {
-    flex: 1;
-    overflow-y: auto;
-    padding: 24px 28px;
-  }
-
-  /* GRID VIEW */
-  #pieces-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 16px;
-  }
-
-  /* LIST VIEW */
-  #pieces-grid.list-view {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-
-  /* PIECE CARD */
-  .piece-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 18px;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .piece-card:hover {
-    border-color: var(--gold);
-    box-shadow: 0 4px 16px var(--shadow);
-    transform: translateY(-1px);
-  }
-
-  .piece-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: var(--accent);
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-
-  .piece-card:hover::before { opacity: 1; }
-
-  .card-type-badge {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--muted);
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .card-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 15px;
-    font-weight: 700;
-    line-height: 1.3;
-    margin-bottom: 8px;
-    color: var(--ink);
-  }
-
-  .card-excerpt {
-    font-size: 12.5px;
-    color: var(--muted);
-    line-height: 1.5;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .card-meta {
-    margin-top: 12px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
-  }
-
-  .tag-pill {
-    font-size: 10px;
-    padding: 2px 8px;
-    background: var(--tag-bg);
-    border-radius: 20px;
-    color: var(--muted);
-    font-family: 'DM Mono', monospace;
-  }
-
-  .card-date {
-    margin-left: auto;
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    color: var(--border);
-  }
-
-  /* LIST MODE CARD */
-  .list-view .piece-card {
-    padding: 14px 18px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .list-view .card-left {
-    flex-shrink: 0;
-    width: 40px;
-    text-align: center;
-    font-size: 20px;
-  }
-
-  .list-view .card-main { flex: 1; min-width: 0; }
-
-  .list-view .card-title {
-    font-size: 14px;
-    margin-bottom: 3px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .list-view .card-excerpt {
-    -webkit-line-clamp: 1;
-    font-size: 12px;
-  }
-
-  .list-view .card-meta { margin-top: 4px; }
-
-  .list-view .card-type-badge { margin-bottom: 0; }
-
-  /* EMPTY STATE */
-  #empty-state {
-    text-align: center;
-    padding: 80px 20px;
-    color: var(--muted);
-  }
-
-  #empty-state .empty-icon { font-size: 48px; margin-bottom: 16px; }
-  #empty-state h3 { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--ink); margin-bottom: 8px; }
-  #empty-state p { font-size: 14px; line-height: 1.6; max-width: 320px; margin: 0 auto 24px; }
-
-  #empty-state button {
-    padding: 10px 24px;
-    background: var(--ink);
-    color: var(--paper);
-    border: none;
-    border-radius: 8px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  /* ── MODALS ── */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(26,24,20,0.6);
-    z-index: 100;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 40px 20px;
-    overflow-y: auto;
-    backdrop-filter: blur(2px);
-  }
-
-  .modal {
-    background: var(--paper);
-    border-radius: 14px;
-    width: 100%;
-    max-width: 720px;
-    box-shadow: 0 20px 60px rgba(26,24,20,0.3);
-    position: relative;
-    animation: modalIn 0.2s ease;
-  }
-
-  @keyframes modalIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .modal-header {
-    padding: 24px 28px 20px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .modal-header h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 20px;
-    font-weight: 700;
-    flex: 1;
-  }
-
-  .modal-close {
-    width: 32px; height: 32px;
-    display: flex; align-items: center; justify-content: center;
-    border: none;
-    background: var(--paper-dark);
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    color: var(--muted);
-    transition: all 0.15s;
-  }
-
-  .modal-close:hover { background: var(--ink); color: white; }
-
-  .modal-body { padding: 24px 28px; }
-  .modal-footer {
-    padding: 16px 28px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    justify-content: flex-end;
-  }
-
-  /* FORM ELEMENTS */
-  .form-row { margin-bottom: 18px; }
-  .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px; }
-
-  label {
-    display: block;
-    font-size: 11px;
-    font-family: 'DM Mono', monospace;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    margin-bottom: 6px;
-  }
-
-  input[type="text"], textarea, select {
-    width: 100%;
-    padding: 10px 14px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--card-bg);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    color: var(--ink);
-    outline: none;
-    transition: border-color 0.15s;
-  }
-
-  input[type="text"]:focus, textarea:focus, select:focus {
-    border-color: var(--gold);
-  }
-
-  textarea { resize: vertical; min-height: 160px; line-height: 1.6; }
-
-  .btn {
-    padding: 9px 20px;
-    border: none;
-    border-radius: 8px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13.5px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .btn-primary { background: var(--ink); color: var(--paper); }
-  .btn-primary:hover { background: #2d2a24; }
-  .btn-danger { background: var(--accent); color: white; }
-  .btn-danger:hover { background: #a93226; }
-  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
-  .btn-ghost:hover { border-color: var(--ink); color: var(--ink); }
-
-  /* TYPE SELECTOR */
-  .type-selector {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 8px;
-    margin-bottom: 18px;
-  }
-
-  .type-option {
-    padding: 10px 6px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.15s;
-    background: var(--card-bg);
-  }
-
-  .type-option:hover { border-color: var(--gold); }
-  .type-option.selected { border-color: var(--accent); background: var(--accent-soft); }
-  .type-option .type-icon { font-size: 18px; margin-bottom: 4px; }
-  .type-option .type-label { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
-
-  /* TAGS INPUT */
-  .tags-input-container {
-    min-height: 42px;
-    padding: 6px 10px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--card-bg);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    align-items: center;
-    cursor: text;
-    transition: border-color 0.15s;
-  }
-
-  .tags-input-container:focus-within { border-color: var(--gold); }
-
-  .tag-item {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    background: var(--tag-bg);
-    border-radius: 20px;
-    padding: 2px 8px 2px 10px;
-    font-size: 12px;
-    font-family: 'DM Mono', monospace;
-    color: var(--ink);
-  }
-
-  .tag-remove {
-    width: 14px; height: 14px;
-    display: flex; align-items: center; justify-content: center;
-    background: var(--muted);
-    border-radius: 50%;
-    color: white;
-    font-size: 9px;
-    cursor: pointer;
-    border: none;
-    flex-shrink: 0;
-    line-height: 1;
-  }
-
-  .tag-remove:hover { background: var(--accent); }
-
-  .tags-input {
-    border: none;
-    background: transparent;
-    outline: none;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    color: var(--ink);
-    min-width: 100px;
-    flex: 1;
-    padding: 2px 4px;
-  }
-
-  /* RELATIONS */
-  .relations-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 8px;
-  }
-
-  .relation-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 12px;
-    background: var(--paper-dark);
-    border-radius: 8px;
-    font-size: 13px;
-  }
-
-  .relation-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    background: var(--border);
-    padding: 2px 6px;
-    border-radius: 4px;
-  }
-
-  .relation-title { flex: 1; font-size: 13px; }
-
-  .relation-remove {
-    border: none;
-    background: transparent;
-    color: var(--muted);
-    cursor: pointer;
-    font-size: 16px;
-    line-height: 1;
-    transition: color 0.15s;
-  }
-
-  .relation-remove:hover { color: var(--accent); }
-
-  /* COMMENTS */
-  .comments-section { margin-top: 24px; }
-
-  .comment-item {
-    padding: 12px 14px;
-    background: var(--paper-dark);
-    border-left: 3px solid var(--gold);
-    border-radius: 0 8px 8px 0;
-    margin-bottom: 10px;
-    position: relative;
-  }
-
-  .comment-meta {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    color: var(--muted);
-    margin-bottom: 6px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-
-  .comment-text { font-size: 13.5px; line-height: 1.6; }
-
-  .comment-delete {
-    position: absolute;
-    top: 8px; right: 10px;
-    border: none;
-    background: transparent;
-    color: var(--border);
-    cursor: pointer;
-    font-size: 14px;
-    transition: color 0.15s;
-  }
-
-  .comment-delete:hover { color: var(--accent); }
-
-  .add-comment-row {
-    display: flex;
-    gap: 8px;
-    margin-top: 10px;
-  }
-
-  .add-comment-row input {
-    flex: 1;
-  }
-
-  /* DETAIL VIEW */
-  #detail-view {
-    position: fixed;
-    inset: 0;
-    background: var(--paper);
-    z-index: 50;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  #detail-topbar {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 16px 32px;
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-  }
-
-  #detail-back {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 14px;
-    background: var(--paper-dark);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-size: 13px;
-    color: var(--muted);
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    transition: all 0.15s;
-  }
-
-  #detail-back:hover { background: var(--ink); color: white; border-color: var(--ink); }
-
-  #detail-actions { margin-left: auto; display: flex; gap: 8px; }
-
-  #detail-content {
-    flex: 1;
-    overflow-y: auto;
-    padding: 40px 60px;
-    max-width: 800px;
-    margin: 0 auto;
-    width: 100%;
-  }
-
-  #detail-content .detail-type {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: var(--muted);
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  #detail-content h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 34px;
-    font-weight: 700;
-    line-height: 1.25;
-    margin-bottom: 16px;
-  }
-
-  .detail-meta-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
-  }
-
-  .detail-divider {
-    height: 1px;
-    background: var(--border);
-    margin: 28px 0;
-  }
-
-  .detail-body {
-    font-size: 16px;
-    line-height: 1.8;
-    color: var(--ink);
-    white-space: pre-wrap;
-  }
-
-  .detail-section-title {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: var(--muted);
-    margin-bottom: 12px;
-  }
-
-  .detail-relations {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .detail-relation-card {
-    padding: 12px 16px;
-    background: var(--paper-dark);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.15s;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .detail-relation-card:hover { border-color: var(--gold); }
-
-  .detail-relation-icon { font-size: 18px; }
-  .detail-relation-info { flex: 1; }
-  .detail-relation-rel { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--muted); }
-  .detail-relation-title { font-size: 14px; font-weight: 500; }
-
-  /* CATEGORY MODAL */
-  .cat-color-picker {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
-  .color-dot {
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: border-color 0.15s;
-    flex-shrink: 0;
-  }
-
-  .color-dot.selected { border-color: var(--ink); }
-
-  /* SEARCH SUGGESTIONS */
-  .search-suggest-dropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    box-shadow: 0 8px 24px var(--shadow);
-    z-index: 200;
-    overflow: hidden;
-    margin-top: 4px;
-  }
-
-  .suggest-item {
-    padding: 10px 14px;
-    cursor: pointer;
-    font-size: 13px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: background 0.1s;
-  }
-
-  .suggest-item:hover { background: var(--paper-dark); }
-
-  /* SCROLLBAR */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
-  /* CATEGORY COLOR STRIP */
-  .cat-strip {
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 4px;
-    border-radius: 10px 0 0 10px;
-  }
-
-  .piece-card { padding-left: 22px; }
-
-  /* IMAGE PREVIEW - clickable */
-  .image-preview {
-    max-width: 100%;
-    border-radius: 8px;
-    margin: 16px 0;
-    border: 1px solid var(--border);
-    cursor: zoom-in;
-    transition: opacity 0.15s;
-    display: block;
-  }
-
-  .image-preview:hover { opacity: 0.92; }
-
-  /* FULLSCREEN LIGHTBOX */
-  #lightbox {
-    position: fixed;
-    inset: 0;
-    background: rgba(10, 9, 8, 0.94);
-    z-index: 300;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: zoom-out;
-    animation: fadeIn 0.18s ease;
-  }
-
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-  #lightbox img {
-    max-width: 92vw;
-    max-height: 90vh;
-    border-radius: 6px;
-    object-fit: contain;
-    box-shadow: 0 24px 80px rgba(0,0,0,0.6);
-    pointer-events: none;
-  }
-
-  #lightbox-close {
-    position: fixed;
-    top: 20px; right: 24px;
-    width: 36px; height: 36px;
-    background: rgba(255,255,255,0.12);
-    border: none;
-    border-radius: 50%;
-    color: white;
-    font-size: 18px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.15s;
-    z-index: 301;
-  }
-
-  #lightbox-close:hover { background: rgba(255,255,255,0.22); }
-
-  /* BACK-RELATIONS (shown on connected piece) */
-  .back-relation-badge {
-    font-size: 10px;
-    font-family: 'DM Mono', monospace;
-    color: var(--muted);
-    font-style: italic;
-  }
-
-  .source-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    color: var(--gold);
-    font-size: 13px;
-    text-decoration: none;
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.15s;
-  }
-
-  .source-link:hover { border-color: var(--gold); }
-
-  /* IMAGE DROP ZONE */
-  #image-drop-zone {
-    border: 2px dashed var(--border);
-    border-radius: 10px;
-    padding: 28px 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: var(--card-bg);
-  }
-
-  #image-drop-zone:hover, #image-drop-zone.drag-over {
-    border-color: var(--gold);
-    background: var(--paper-dark);
-  }
-
-  #image-drop-zone.drag-over #image-drop-inner {
-    opacity: 0.6;
-    transform: scale(0.97);
-  }
-
-  #image-drop-inner { transition: all 0.2s; }
+:root {
+  --ink:#1a1814; --paper:#f5f0e8; --paper-dark:#ede8dc; --paper-darker:#e0d9cc;
+  --accent:#c0392b; --accent-soft:#e8d5d2; --gold:#a07840; --muted:#7a7060;
+  --border:#c8bfaa; --card-bg:#faf7f2; --shadow:rgba(26,24,20,0.12); --tag-bg:#e8e0d0;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;font-size:15px;}
+#app{display:flex;height:100vh;overflow:hidden;}
+/* SIDEBAR */
+#sidebar{width:230px;min-width:230px;background:var(--ink);color:var(--paper);display:flex;flex-direction:column;overflow-y:auto;z-index:10;}
+#sidebar-header{padding:28px 20px 20px;border-bottom:1px solid rgba(255,255,255,0.08);}
+#sidebar-header h1{font-family:'Playfair Display',serif;font-size:22px;letter-spacing:0.02em;color:var(--paper);}
+#sidebar-header p{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:0.1em;}
+.sidebar-section{padding:16px 20px 8px;}
+.sidebar-section-label{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:0.15em;color:rgba(255,255,255,0.3);margin-bottom:8px;}
+.sidebar-nav-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;cursor:pointer;font-size:13px;color:rgba(255,255,255,0.7);transition:all 0.15s;margin-bottom:2px;}
+.sidebar-nav-item:hover{background:rgba(255,255,255,0.07);color:var(--paper);}
+.sidebar-nav-item.active{background:var(--accent);color:white;}
+.sidebar-nav-item .nav-icon{font-size:13px;width:18px;text-align:center;flex-shrink:0;}
+.sidebar-nav-item .nav-count{margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,0.3);}
+#sidebar-categories{padding:0 20px 4px;display:flex;flex-direction:column;gap:2px;}
+.cat-item{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:12.5px;color:rgba(255,255,255,0.6);transition:all 0.15s;}
+.cat-item:hover{background:rgba(255,255,255,0.07);color:var(--paper);}
+.cat-item.active{background:rgba(255,255,255,0.12);color:white;}
+.cat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+#add-category-btn{margin:4px 20px 8px;padding:6px 10px;background:transparent;border:1px dashed rgba(255,255,255,0.2);border-radius:6px;color:rgba(255,255,255,0.35);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;text-align:left;width:calc(100% - 40px);}
+#add-category-btn:hover{border-color:rgba(255,255,255,0.4);color:rgba(255,255,255,0.6);}
+#sidebar-footer{margin-top:auto;padding:16px 20px;border-top:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;gap:8px;}
+.sidebar-new-btn{width:100%;padding:10px 14px;background:var(--accent);border:none;border-radius:8px;color:white;font-family:'DM Sans',sans-serif;font-size:13.5px;font-weight:500;cursor:pointer;transition:background 0.15s;text-align:center;margin-bottom:4px;}
+.sidebar-new-btn:hover{background:#a93226;}
+.sidebar-footer-btn{padding:7px 10px;background:rgba(255,255,255,0.06);border:none;border-radius:6px;color:rgba(255,255,255,0.6);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;text-align:left;display:flex;align-items:center;gap:8px;}
+.sidebar-footer-btn:hover{background:rgba(255,255,255,0.12);color:white;}
+/* MAIN */
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+#topbar{display:flex;align-items:center;gap:12px;padding:16px 28px;background:var(--paper);border-bottom:1px solid var(--border);flex-shrink:0;}
+#topbar h2{font-family:'Playfair Display',serif;font-size:20px;font-weight:400;flex:1;}
+#search-box{display:flex;align-items:center;gap:8px;background:var(--paper-dark);border:1px solid var(--border);border-radius:8px;padding:7px 14px;width:240px;}
+#search-box input{border:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:13.5px;color:var(--ink);outline:none;width:100%;}
+#search-box input::placeholder{color:var(--muted);}
+.sort-select{border:1px solid var(--border);background:var(--paper-dark);border-radius:8px;padding:7px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);outline:none;cursor:pointer;}
+.view-toggle{display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.view-btn{padding:7px 12px;background:var(--paper-dark);border:none;cursor:pointer;font-size:14px;color:var(--muted);transition:all 0.15s;border-right:1px solid var(--border);}
+.view-btn:last-child{border-right:none;}
+.view-btn.active{background:var(--ink);color:var(--paper);}
+#new-piece-btn{padding:8px 18px;background:var(--accent);border:none;border-radius:8px;color:white;font-family:'DM Sans',sans-serif;font-size:13.5px;font-weight:500;cursor:pointer;transition:all 0.15s;white-space:nowrap;}
+#new-piece-btn:hover{background:#a93226;}
+#content-area{flex:1;overflow-y:auto;padding:24px 28px;}
+/* CARDS */
+#pieces-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;}
+#pieces-grid.list-view{grid-template-columns:1fr;gap:8px;}
+.piece-card{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:18px 18px 18px 22px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;}
+.piece-card:hover{border-color:var(--gold);box-shadow:0 4px 16px var(--shadow);transform:translateY(-1px);}
+.piece-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent);opacity:0;transition:opacity 0.2s;}
+.piece-card:hover::before{opacity:1;}
+.cat-strip{position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:10px 0 0 10px;}
+.card-type-badge{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.card-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;line-height:1.3;margin-bottom:8px;color:var(--ink);}
+.card-excerpt{font-size:12.5px;color:var(--muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.card-meta{margin-top:12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.tag-pill{font-size:10px;padding:2px 8px;background:var(--tag-bg);border-radius:20px;color:var(--muted);font-family:'DM Mono',monospace;}
+.tag-pill.clickable{cursor:pointer;transition:background 0.15s;}
+.tag-pill.clickable:hover{background:var(--border);color:var(--ink);}
+.card-date{margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;color:var(--border);}
+.list-view .piece-card{padding:14px 18px 14px 22px;display:flex;align-items:center;gap:16px;}
+.list-view .card-left{flex-shrink:0;width:40px;text-align:center;font-size:20px;}
+.list-view .card-main{flex:1;min-width:0;}
+.list-view .card-title{font-size:14px;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.list-view .card-excerpt{-webkit-line-clamp:1;font-size:12px;}
+.list-view .card-meta{margin-top:4px;}
+.card-collection-strip{display:flex;gap:4px;margin-bottom:10px;overflow:hidden;border-radius:6px;height:60px;}
+.card-collection-thumb{flex:1;background:var(--paper-darker);border-radius:4px;overflow:hidden;min-width:0;}
+.card-collection-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.card-collection-more{flex-shrink:0;width:40px;background:var(--paper-darker);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);}
+#empty-state{text-align:center;padding:80px 20px;color:var(--muted);grid-column:1/-1;}
+#empty-state .empty-icon{font-size:48px;margin-bottom:16px;}
+#empty-state h3{font-family:'Playfair Display',serif;font-size:22px;color:var(--ink);margin-bottom:8px;}
+#empty-state p{font-size:14px;line-height:1.6;max-width:320px;margin:0 auto 24px;}
+#empty-state button{padding:10px 24px;background:var(--ink);color:var(--paper);border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;}
+/* MODALS */
+.modal-overlay{position:fixed;inset:0;background:rgba(26,24,20,0.6);z-index:100;display:flex;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto;backdrop-filter:blur(2px);}
+.modal{background:var(--paper);border-radius:14px;width:100%;max-width:760px;box-shadow:0 20px 60px rgba(26,24,20,0.3);position:relative;animation:modalIn 0.2s ease;}
+@keyframes modalIn{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
+.modal-header{padding:24px 28px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
+.modal-header h3{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;flex:1;}
+.modal-close{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:none;background:var(--paper-dark);border-radius:8px;cursor:pointer;font-size:16px;color:var(--muted);transition:all 0.15s;}
+.modal-close:hover{background:var(--ink);color:white;}
+.modal-body{padding:24px 28px;}
+.modal-footer{padding:16px 28px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;justify-content:flex-end;}
+/* FORMS */
+.form-row{margin-bottom:18px;}
+.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;}
+label{display:block;font-size:11px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:6px;}
+input[type="text"],textarea,select{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--card-bg);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);outline:none;transition:border-color 0.15s;}
+input[type="text"]:focus,textarea:focus,select:focus{border-color:var(--gold);}
+textarea{resize:vertical;min-height:180px;line-height:1.6;font-family:'DM Mono',monospace;font-size:13px;}
+.btn{padding:9px 20px;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13.5px;font-weight:500;cursor:pointer;transition:all 0.15s;}
+.btn-primary{background:var(--ink);color:var(--paper);}
+.btn-primary:hover{background:#2d2a24;}
+.btn-danger{background:var(--accent);color:white;}
+.btn-danger:hover{background:#a93226;}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--ink);color:var(--ink);}
+.btn-sm{padding:5px 12px;font-size:12px;}
+/* TYPE SELECTOR */
+.type-selector{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:18px;}
+.type-option{padding:10px 6px;border:1px solid var(--border);border-radius:8px;text-align:center;cursor:pointer;transition:all 0.15s;background:var(--card-bg);}
+.type-option:hover{border-color:var(--gold);}
+.type-option.selected{border-color:var(--accent);background:var(--accent-soft);}
+.type-option .type-icon{font-size:18px;margin-bottom:4px;}
+.type-option .type-label{font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;}
+/* MULTI-CATEGORY */
+.cat-multi-list{display:flex;flex-direction:column;gap:4px;max-height:160px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;padding:8px;background:var(--card-bg);}
+.cat-multi-item{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:6px;cursor:pointer;font-size:13px;transition:background 0.1s;}
+.cat-multi-item:hover{background:var(--paper-dark);}
+.cat-multi-item input[type="checkbox"]{width:15px;height:15px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;}
+.cat-multi-add{padding:6px 8px;font-size:12px;color:var(--gold);cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif;text-align:left;margin-top:2px;}
+.cat-multi-add:hover{text-decoration:underline;}
+/* TAGS INPUT */
+.tags-input-container{min-height:42px;padding:6px 10px;border:1px solid var(--border);border-radius:8px;background:var(--card-bg);display:flex;flex-wrap:wrap;gap:6px;align-items:center;cursor:text;transition:border-color 0.15s;}
+.tags-input-container:focus-within{border-color:var(--gold);}
+.tag-item{display:flex;align-items:center;gap:4px;background:var(--tag-bg);border-radius:20px;padding:2px 8px 2px 10px;font-size:12px;font-family:'DM Mono',monospace;color:var(--ink);}
+.tag-remove{width:14px;height:14px;display:flex;align-items:center;justify-content:center;background:var(--muted);border-radius:50%;color:white;font-size:9px;cursor:pointer;border:none;flex-shrink:0;line-height:1;}
+.tag-remove:hover{background:var(--accent);}
+.tags-input{border:none;background:transparent;outline:none;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);min-width:100px;flex:1;padding:2px 4px;}
+/* RELATIONS */
+.relations-list{display:flex;flex-direction:column;gap:8px;margin-top:8px;}
+.relation-item{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--paper-dark);border-radius:8px;font-size:13px;}
+.relation-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);background:var(--border);padding:2px 6px;border-radius:4px;white-space:nowrap;}
+.relation-title{flex:1;font-size:13px;}
+.relation-remove{border:none;background:transparent;color:var(--muted);cursor:pointer;font-size:16px;line-height:1;transition:color 0.15s;}
+.relation-remove:hover{color:var(--accent);}
+/* COMMENTS */
+.comment-item{padding:12px 14px;background:var(--paper-dark);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;margin-bottom:10px;position:relative;}
+.comment-meta{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.08em;}
+.comment-text{font-size:13.5px;line-height:1.6;}
+.comment-delete{position:absolute;top:8px;right:10px;border:none;background:transparent;color:var(--border);cursor:pointer;font-size:14px;transition:color 0.15s;}
+.comment-delete:hover{color:var(--accent);}
+.add-comment-row{display:flex;gap:8px;margin-top:10px;}
+.add-comment-row input{flex:1;}
+/* MARKDOWN TOOLBAR */
+.md-toolbar{display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap;}
+.md-tool-btn{padding:4px 10px;background:var(--paper-dark);border:1px solid var(--border);border-radius:6px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);cursor:pointer;transition:all 0.12s;line-height:1.4;}
+.md-tool-btn:hover{background:var(--ink);color:white;border-color:var(--ink);}
+.md-preview-toggle{display:flex;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:8px;width:fit-content;}
+.md-preview-btn{padding:5px 14px;background:var(--paper-dark);border:none;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--muted);cursor:pointer;transition:all 0.12s;border-right:1px solid var(--border);}
+.md-preview-btn:last-child{border-right:none;}
+.md-preview-btn.active{background:var(--ink);color:white;}
+.md-preview-pane{min-height:180px;padding:14px;border:1px solid var(--border);border-radius:8px;background:var(--card-bg);font-size:14px;line-height:1.7;}
+/* MARKDOWN RENDERED */
+.md-rendered h1{font-family:'Playfair Display',serif;font-size:26px;margin:16px 0 10px;}
+.md-rendered h2{font-family:'Playfair Display',serif;font-size:20px;margin:14px 0 8px;}
+.md-rendered h3{font-size:16px;font-weight:600;margin:12px 0 6px;}
+.md-rendered p{margin-bottom:12px;}
+.md-rendered ul,.md-rendered ol{margin:8px 0 12px 22px;}
+.md-rendered li{margin-bottom:4px;line-height:1.6;}
+.md-rendered strong{font-weight:600;}
+.md-rendered em{font-style:italic;}
+.md-rendered code{font-family:'DM Mono',monospace;font-size:12px;background:var(--paper-darker);padding:1px 5px;border-radius:4px;}
+.md-rendered pre{background:var(--ink);color:var(--paper);padding:14px 16px;border-radius:8px;overflow-x:auto;margin:12px 0;}
+.md-rendered pre code{background:none;color:inherit;font-size:13px;padding:0;}
+.md-rendered blockquote{border-left:3px solid var(--gold);margin:12px 0;padding:6px 14px;color:var(--muted);font-style:italic;}
+.md-rendered a{color:var(--gold);text-decoration:underline;}
+.md-rendered hr{border:none;border-top:1px solid var(--border);margin:16px 0;}
+.md-rendered table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px;}
+.md-rendered th{background:var(--paper-dark);font-weight:600;text-align:left;padding:8px 12px;border:1px solid var(--border);font-size:12px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.05em;}
+.md-rendered td{padding:8px 12px;border:1px solid var(--border);vertical-align:top;line-height:1.5;}
+.md-rendered tr:nth-child(even) td{background:var(--paper-dark);}
+/* IMAGE UPLOAD */
+#image-drop-zone{border:2px dashed var(--border);border-radius:10px;padding:28px 20px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--card-bg);}
+#image-drop-zone:hover,#image-drop-zone.drag-over{border-color:var(--gold);background:var(--paper-dark);}
+#image-preview-container{display:none;margin-top:10px;position:relative;}
+#image-preview-img{max-width:100%;max-height:220px;border-radius:8px;border:1px solid var(--border);display:block;}
+.image-preview{max-width:100%;border-radius:8px;margin:16px 0;border:1px solid var(--border);cursor:zoom-in;transition:opacity 0.15s;display:block;}
+.image-preview:hover{opacity:0.92;}
+/* COLLECTION EDITOR */
+.collection-images-list{display:flex;flex-direction:column;gap:8px;margin-top:10px;}
+.collection-image-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--paper-dark);border-radius:8px;border:1px solid var(--border);}
+.collection-image-thumb{width:48px;height:48px;object-fit:cover;border-radius:6px;flex-shrink:0;}
+.collection-image-thumb-placeholder{width:48px;height:48px;background:var(--paper-darker);border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.collection-image-info{flex:1;min-width:0;}
+.collection-image-caption{font-size:12px;border:1px solid transparent;border-radius:6px;background:transparent;width:100%;padding:3px 6px;font-family:'DM Sans',sans-serif;color:var(--ink);transition:border-color 0.15s;}
+.collection-image-caption:focus{border-color:var(--gold);outline:none;background:var(--card-bg);}
+.collection-image-caption::placeholder{color:var(--muted);}
+.collection-image-tags-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;}
+.img-tag-pill{font-size:10px;padding:1px 7px;background:var(--tag-bg);border-radius:20px;color:var(--muted);font-family:'DM Mono',monospace;display:flex;align-items:center;gap:3px;}
+.img-tag-pill button{background:none;border:none;color:var(--muted);cursor:pointer;font-size:9px;padding:0;line-height:1;}
+.img-tag-input{font-size:11px;border:none;background:transparent;outline:none;color:var(--ink);min-width:60px;font-family:'DM Mono',monospace;}
+.collection-image-remove{background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:0 4px;transition:color 0.15s;flex-shrink:0;}
+.collection-image-remove:hover{color:var(--accent);}
+/* DETAIL VIEW */
+#detail-view{position:fixed;inset:0;background:var(--paper);z-index:50;display:flex;flex-direction:column;overflow:hidden;}
+#detail-topbar{display:flex;align-items:center;gap:14px;padding:14px 32px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.detail-back-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--paper-dark);border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;}
+.detail-back-btn:hover{background:var(--ink);color:white;border-color:var(--ink);}
+#detail-actions{margin-left:auto;display:flex;gap:8px;}
+#detail-content{flex:1;overflow-y:auto;padding:40px 60px;max-width:860px;margin:0 auto;width:100%;}
+/* DETAIL QUICKLINKS */
+.detail-quicklinks{display:flex;align-items:center;gap:6px;margin-bottom:24px;flex-wrap:wrap;}
+.detail-ql{font-size:12px;font-family:'DM Mono',monospace;color:var(--muted);padding:4px 10px;border:1px solid var(--border);border-radius:20px;cursor:pointer;text-decoration:none;transition:all 0.15s;background:var(--card-bg);}
+.detail-ql:hover{border-color:var(--gold);color:var(--gold);}
+/* DETAIL META CHIPS */
+.detail-type-chip{display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);padding:4px 10px;border:1px solid var(--border);border-radius:20px;cursor:pointer;background:var(--card-bg);transition:all 0.15s;}
+.detail-type-chip:hover{border-color:var(--gold);color:var(--gold);}
+.detail-cat-chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:4px 10px;border-radius:20px;cursor:pointer;transition:all 0.15s;border:1px solid transparent;}
+.detail-cat-chip:hover{border-color:var(--border);}
+.detail-tag-chip{font-size:11px;padding:3px 10px;background:var(--tag-bg);border-radius:20px;color:var(--muted);font-family:'DM Mono',monospace;cursor:pointer;transition:background 0.15s;}
+.detail-tag-chip:hover{background:var(--border);color:var(--ink);}
+#detail-content h1{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;line-height:1.25;margin-bottom:16px;}
+.detail-meta-row{display:flex;align-items:center;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.detail-divider{height:1px;background:var(--border);margin:28px 0;}
+.detail-body{font-size:16px;line-height:1.8;color:var(--ink);}
+.detail-section-title{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.15em;color:var(--muted);margin-bottom:12px;}
+.detail-relations{display:flex;flex-direction:column;gap:8px;}
+.detail-relation-card{padding:12px 16px;background:var(--paper-dark);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:12px;}
+.detail-relation-card:hover{border-color:var(--gold);}
+.detail-relation-icon{font-size:18px;}
+.detail-relation-info{flex:1;}
+.detail-relation-rel{font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);}
+.detail-relation-title{font-size:14px;font-weight:500;}
+.back-relation-badge{font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);font-style:italic;}
+.source-link{display:inline-flex;align-items:center;gap:6px;color:var(--gold);font-size:13px;text-decoration:none;border-bottom:1px solid transparent;transition:border-color 0.15s;}
+.source-link:hover{border-color:var(--gold);}
+/* COLLECTION GALLERY */
+.collection-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin:16px 0;}
+.collection-gallery-item{border-radius:8px;overflow:hidden;border:1px solid var(--border);cursor:zoom-in;position:relative;background:var(--paper-darker);}
+.collection-gallery-item img{width:100%;height:160px;object-fit:cover;display:block;transition:opacity 0.15s;}
+.collection-gallery-item:hover img{opacity:0.9;}
+.collection-gallery-caption{padding:6px 10px;font-size:11.5px;color:var(--muted);line-height:1.4;}
+.collection-gallery-tags{display:flex;flex-wrap:wrap;gap:3px;padding:0 10px 8px;}
+/* BACK TO TOP */
+.back-to-top{display:inline-flex;align-items:center;gap:6px;margin-top:40px;font-size:12px;font-family:'DM Mono',monospace;color:var(--muted);cursor:pointer;text-transform:uppercase;letter-spacing:0.1em;border:1px solid var(--border);padding:6px 14px;border-radius:20px;background:var(--card-bg);transition:all 0.15s;text-decoration:none;}
+.back-to-top:hover{border-color:var(--gold);color:var(--gold);}
+/* SUB-OVERVIEW */
+#overview-view{position:fixed;inset:0;background:var(--paper);z-index:50;display:flex;flex-direction:column;overflow:hidden;}
+#overview-topbar{display:flex;align-items:center;gap:14px;padding:14px 32px;border-bottom:1px solid var(--border);flex-shrink:0;}
+#overview-content{flex:1;overflow-y:auto;padding:40px 60px;max-width:1000px;margin:0 auto;width:100%;}
+.overview-intro-text{font-size:15px;line-height:1.8;color:var(--ink);margin-top:12px;}
+.overview-piece-order{display:flex;flex-direction:column;gap:8px;}
+.overview-piece-item{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--card-bg);border:1px solid var(--border);border-radius:10px;transition:all 0.15s;}
+.overview-piece-item:hover{border-color:var(--gold);}
+.overview-piece-item.drag-over{border-color:var(--accent);background:var(--accent-soft);}
+.overview-piece-item.dragging{opacity:0.4;}
+.overview-piece-drag{cursor:grab;color:var(--border);font-size:16px;flex-shrink:0;user-select:none;}
+.overview-piece-drag:hover{color:var(--muted);}
+.overview-piece-icon{font-size:20px;flex-shrink:0;}
+.overview-piece-info{flex:1;min-width:0;cursor:pointer;}
+.overview-piece-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;}
+.overview-piece-meta{font-size:12px;color:var(--muted);margin-top:2px;}
+.overview-move-btns{display:flex;gap:4px;flex-shrink:0;}
+.overview-move-btn{width:26px;height:26px;background:var(--paper-dark);border:1px solid var(--border);border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all 0.12s;}
+.overview-move-btn:hover{background:var(--ink);color:white;border-color:var(--ink);}
+.overview-move-btn:disabled{opacity:0.3;cursor:default;}
+.overview-move-btn:disabled:hover{background:var(--paper-dark);color:inherit;border-color:var(--border);}
+/* LIGHTBOX */
+#lightbox{position:fixed;inset:0;background:rgba(10,9,8,0.94);z-index:300;display:flex;align-items:center;justify-content:center;cursor:zoom-out;animation:fadeIn 0.18s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+#lightbox img{max-width:92vw;max-height:90vh;border-radius:6px;object-fit:contain;box-shadow:0 24px 80px rgba(0,0,0,0.6);pointer-events:none;}
+#lightbox-close{position:fixed;top:20px;right:24px;width:36px;height:36px;background:rgba(255,255,255,0.12);border:none;border-radius:50%;color:white;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.15s;z-index:301;}
+#lightbox-close:hover{background:rgba(255,255,255,0.22);}
+#lightbox-caption{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,0.8);font-size:13px;font-family:'DM Sans',sans-serif;background:rgba(0,0,0,0.5);padding:6px 16px;border-radius:20px;pointer-events:none;}
+/* CATEGORY MODAL */
+.cat-color-picker{display:flex;gap:8px;flex-wrap:wrap;}
+.color-dot{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:border-color 0.15s;flex-shrink:0;}
+.color-dot.selected{border-color:var(--ink);}
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
 </style>
 </head>
 <body>
@@ -1025,44 +281,22 @@
   <!-- SIDEBAR -->
   <div id="sidebar">
     <div id="sidebar-header">
-      <h1>Library</h1>
+      <h1>Lenses</h1>
       <p id="piece-count-label">0 pieces</p>
     </div>
-
     <div class="sidebar-section">
       <div class="sidebar-section-label">Browse</div>
-      <div class="sidebar-nav-item active" data-filter="all" onclick="setFilter('all', this)">
-        <span class="nav-icon">📚</span> All pieces
-        <span class="nav-count" id="count-all">0</span>
-      </div>
-      <div class="sidebar-nav-item" data-filter="article" onclick="setFilter('article', this)">
-        <span class="nav-icon">📄</span> Articles
-        <span class="nav-count" id="count-article">0</span>
-      </div>
-      <div class="sidebar-nav-item" data-filter="note" onclick="setFilter('note', this)">
-        <span class="nav-icon">✏️</span> Notes
-        <span class="nav-count" id="count-note">0</span>
-      </div>
-      <div class="sidebar-nav-item" data-filter="image" onclick="setFilter('image', this)">
-        <span class="nav-icon">🖼️</span> Images
-        <span class="nav-count" id="count-image">0</span>
-      </div>
-      <div class="sidebar-nav-item" data-filter="reference" onclick="setFilter('reference', this)">
-        <span class="nav-icon">🔗</span> References
-        <span class="nav-count" id="count-reference">0</span>
-      </div>
-      <div class="sidebar-nav-item" data-filter="idea" onclick="setFilter('idea', this)">
-        <span class="nav-icon">💡</span> Ideas
-        <span class="nav-count" id="count-idea">0</span>
-      </div>
+      <div class="sidebar-nav-item active" data-filter="all" onclick="setFilter('all',this)"><span class="nav-icon">📚</span>All pieces<span class="nav-count" id="count-all">0</span></div>
+      <div class="sidebar-nav-item" data-filter="article" onclick="setFilter('article',this)"><span class="nav-icon">📄</span>Articles<span class="nav-count" id="count-article">0</span></div>
+      <div class="sidebar-nav-item" data-filter="note" onclick="setFilter('note',this)"><span class="nav-icon">✏️</span>Notes<span class="nav-count" id="count-note">0</span></div>
+      <div class="sidebar-nav-item" data-filter="image" onclick="setFilter('image',this)"><span class="nav-icon">🖼️</span>Images<span class="nav-count" id="count-image">0</span></div>
+      <div class="sidebar-nav-item" data-filter="collection" onclick="setFilter('collection',this)"><span class="nav-icon">🗂️</span>Collections<span class="nav-count" id="count-collection">0</span></div>
+      <div class="sidebar-nav-item" data-filter="reference" onclick="setFilter('reference',this)"><span class="nav-icon">🔗</span>References<span class="nav-count" id="count-reference">0</span></div>
+      <div class="sidebar-nav-item" data-filter="idea" onclick="setFilter('idea',this)"><span class="nav-icon">💡</span>Ideas<span class="nav-count" id="count-idea">0</span></div>
     </div>
-
-    <div class="sidebar-section">
-      <div class="sidebar-section-label">Categories</div>
-    </div>
+    <div class="sidebar-section"><div class="sidebar-section-label">Categories</div></div>
     <div id="sidebar-categories"></div>
     <button id="add-category-btn" onclick="openCategoryModal()">+ New category</button>
-
     <div id="sidebar-footer">
       <button class="sidebar-new-btn" onclick="openEditorModal()">+ New piece</button>
       <button class="sidebar-footer-btn" onclick="exportData()">⬇ Export JSON</button>
@@ -1075,10 +309,7 @@
   <div id="main">
     <div id="topbar">
       <h2 id="topbar-title">All pieces</h2>
-      <div id="search-box" style="position:relative">
-        <span>🔍</span>
-        <input type="text" id="search-input" placeholder="Search titles, content, tags…" oninput="onSearch(this.value)">
-      </div>
+      <div id="search-box"><span>🔍</span><input type="text" id="search-input" placeholder="Search titles, content, tags…" oninput="onSearch(this.value)"></div>
       <select class="sort-select" id="sort-select" onchange="renderPieces()">
         <option value="date-desc">Newest first</option>
         <option value="date-asc">Oldest first</option>
@@ -1087,15 +318,12 @@
         <option value="type">By type</option>
       </select>
       <div class="view-toggle">
-        <button class="view-btn active" id="btn-grid" onclick="setView('grid')" title="Grid view">⊞</button>
-        <button class="view-btn" id="btn-list" onclick="setView('list')" title="List view">☰</button>
+        <button class="view-btn active" id="btn-grid" onclick="setView('grid')">⊞</button>
+        <button class="view-btn" id="btn-list" onclick="setView('list')">☰</button>
       </div>
       <button id="new-piece-btn" onclick="openEditorModal()">+ New piece</button>
     </div>
-
-    <div id="content-area">
-      <div id="pieces-grid"></div>
-    </div>
+    <div id="content-area"><div id="pieces-grid"></div></div>
   </div>
 </div>
 
@@ -1103,10 +331,13 @@
 <div id="lightbox" style="display:none" onclick="closeLightbox()">
   <button id="lightbox-close" onclick="closeLightbox()">✕</button>
   <img id="lightbox-img" src="" alt="">
+  <div id="lightbox-caption" style="display:none"></div>
 </div>
+
+<!-- DETAIL VIEW -->
 <div id="detail-view" style="display:none">
   <div id="detail-topbar">
-    <button id="detail-back" onclick="closeDetail()">← Back</button>
+    <button class="detail-back-btn" onclick="closeDetail()">← Back</button>
     <span id="detail-breadcrumb" style="font-size:13px;color:var(--muted)"></span>
     <div id="detail-actions">
       <button class="btn btn-ghost" onclick="editCurrentPiece()">✏️ Edit</button>
@@ -1114,6 +345,16 @@
     </div>
   </div>
   <div id="detail-content"></div>
+</div>
+
+<!-- SUB-OVERVIEW VIEW -->
+<div id="overview-view" style="display:none">
+  <div id="overview-topbar">
+    <button class="detail-back-btn" onclick="closeOverview()">← Back</button>
+    <span id="overview-breadcrumb" style="font-size:13px;color:var(--muted)"></span>
+    <div id="overview-actions" style="margin-left:auto;display:flex;gap:8px"></div>
+  </div>
+  <div id="overview-content"></div>
 </div>
 
 <!-- EDITOR MODAL -->
@@ -1124,81 +365,65 @@
       <button class="modal-close" onclick="closeEditorModal()">✕</button>
     </div>
     <div class="modal-body">
-      <!-- TYPE -->
       <div class="form-row">
         <label>Type</label>
         <div class="type-selector">
-          <div class="type-option selected" data-type="article" onclick="selectType('article')">
-            <div class="type-icon">📄</div>
-            <div class="type-label">Article</div>
-          </div>
-          <div class="type-option" data-type="note" onclick="selectType('note')">
-            <div class="type-icon">✏️</div>
-            <div class="type-label">Note</div>
-          </div>
-          <div class="type-option" data-type="image" onclick="selectType('image')">
-            <div class="type-icon">🖼️</div>
-            <div class="type-label">Image</div>
-          </div>
-          <div class="type-option" data-type="reference" onclick="selectType('reference')">
-            <div class="type-icon">🔗</div>
-            <div class="type-label">Reference</div>
-          </div>
-          <div class="type-option" data-type="idea" onclick="selectType('idea')">
-            <div class="type-icon">💡</div>
-            <div class="type-label">Idea</div>
-          </div>
+          <div class="type-option selected" data-type="article" onclick="selectType('article')"><div class="type-icon">📄</div><div class="type-label">Article</div></div>
+          <div class="type-option" data-type="note" onclick="selectType('note')"><div class="type-icon">✏️</div><div class="type-label">Note</div></div>
+          <div class="type-option" data-type="image" onclick="selectType('image')"><div class="type-icon">🖼️</div><div class="type-label">Image</div></div>
+          <div class="type-option" data-type="collection" onclick="selectType('collection')"><div class="type-icon">🗂️</div><div class="type-label">Collection</div></div>
+          <div class="type-option" data-type="reference" onclick="selectType('reference')"><div class="type-icon">🔗</div><div class="type-label">Reference</div></div>
+          <div class="type-option" data-type="idea" onclick="selectType('idea')"><div class="type-icon">💡</div><div class="type-label">Idea</div></div>
         </div>
       </div>
-
-      <!-- TITLE -->
-      <div class="form-row">
-        <label>Title</label>
-        <input type="text" id="editor-title" placeholder="Give this piece a title…">
-      </div>
-
-      <!-- CATEGORY + DATE -->
       <div class="form-row-2">
-        <div>
-          <label>Category</label>
-          <select id="editor-category">
-            <option value="">— none —</option>
-          </select>
-        </div>
-        <div>
-          <label>Source / URL</label>
-          <input type="text" id="editor-source" placeholder="https://…">
-        </div>
+        <div><label>Title</label><input type="text" id="editor-title" placeholder="Give this piece a title…"></div>
+        <div><label>Source / URL</label><input type="text" id="editor-source" placeholder="https://…"></div>
       </div>
-
-      <!-- CONTENT -->
       <div class="form-row">
-        <label>Content</label>
-        <textarea id="editor-content" placeholder="Write your content here…"></textarea>
+        <label>Categories</label>
+        <div class="cat-multi-list" id="cat-multi-list"></div>
+        <button type="button" class="cat-multi-add" onclick="openCategoryModal(true)">+ Create new category</button>
       </div>
-
-      <!-- IMAGE UPLOAD (shown for image type) -->
+      <div class="form-row" id="content-row">
+        <label>Content <span style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;text-transform:none;letter-spacing:0">(Markdown supported — tables, headings, bold, lists, code)</span></label>
+        <div class="md-preview-toggle">
+          <button class="md-preview-btn active" id="md-write-btn" onclick="setMdMode('write')">Write</button>
+          <button class="md-preview-btn" id="md-preview-btn-el" onclick="setMdMode('preview')">Preview</button>
+        </div>
+        <div class="md-toolbar" id="md-toolbar">
+          <button class="md-tool-btn" type="button" onclick="mdInsert('**','**','bold')"><strong>B</strong></button>
+          <button class="md-tool-btn" type="button" onclick="mdInsert('*','*','italic')" style="font-style:italic">I</button>
+          <button class="md-tool-btn" type="button" onclick="mdInsertLine('# ')">H1</button>
+          <button class="md-tool-btn" type="button" onclick="mdInsertLine('## ')">H2</button>
+          <button class="md-tool-btn" type="button" onclick="mdInsertLine('### ')">H3</button>
+          <button class="md-tool-btn" type="button" onclick="mdInsertLine('- ')">— List</button>
+          <button class="md-tool-btn" type="button" onclick="mdInsertLine('> ')">❝ Quote</button>
+          <button class="md-tool-btn" type="button" onclick="mdInsert('`','`','code')">&lt;/&gt; Code</button>
+          <button class="md-tool-btn" type="button" onclick="mdInsertTable()">⊞ Table</button>
+          <button class="md-tool-btn" type="button" onclick="mdInsertLine('---')">― HR</button>
+          <button class="md-tool-btn" type="button" onclick="mdInsert('[','](url)','link text')">🔗 Link</button>
+        </div>
+        <textarea id="editor-content" placeholder="Write in Markdown…&#10;&#10;**bold**, *italic*, # Heading, - list item, > quote, `code`&#10;&#10;Table:&#10;| Col 1 | Col 2 |&#10;|-------|-------|&#10;| A     | B     |"></textarea>
+        <div class="md-preview-pane md-rendered" id="md-preview-pane" style="display:none"></div>
+      </div>
+      <!-- SINGLE IMAGE -->
       <div class="form-row" id="image-url-row" style="display:none">
         <label>Image</label>
-        <!-- Drop zone / file picker -->
-        <div id="image-drop-zone" onclick="document.getElementById('image-file-input').click()"
+        <div id="image-drop-zone"
+          onclick="document.getElementById('image-file-input').click()"
           ondragover="event.preventDefault();this.classList.add('drag-over')"
           ondragleave="this.classList.remove('drag-over')"
           ondrop="handleImageDrop(event)">
-          <div id="image-drop-inner">
-            <div style="font-size:28px;margin-bottom:8px">📁</div>
-            <div style="font-size:13.5px;font-weight:500;color:var(--ink)">Choose from device or drag & drop</div>
-            <div style="font-size:11px;color:var(--muted);margin-top:4px">Photos, iCloud, files — JPG, PNG, GIF, WebP</div>
-          </div>
+          <div style="font-size:28px;margin-bottom:8px">📁</div>
+          <div style="font-size:13.5px;font-weight:500;color:var(--ink)">Choose from device or drag & drop</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px">Photos, iCloud, Files — JPG, PNG, GIF, WebP</div>
           <input type="file" id="image-file-input" accept="image/*" style="display:none" onchange="handleImageFile(event)">
         </div>
-        <!-- Preview -->
-        <div id="image-preview-container" style="display:none;margin-top:10px;position:relative">
-          <img id="image-preview-img" style="max-width:100%;max-height:220px;border-radius:8px;border:1px solid var(--border);display:block">
-          <button onclick="clearImage()" title="Remove image"
-            style="position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;background:rgba(26,24,20,0.7);border:none;color:white;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button>
+        <div id="image-preview-container">
+          <img id="image-preview-img" src="" alt="">
+          <button type="button" onclick="clearImage()" style="position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;background:rgba(26,24,20,0.7);border:none;color:white;font-size:16px;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center;">×</button>
         </div>
-        <!-- Or paste URL -->
         <div style="display:flex;align-items:center;gap:8px;margin-top:10px">
           <div style="flex:1;height:1px;background:var(--border)"></div>
           <span style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.08em">or paste URL</span>
@@ -1206,7 +431,22 @@
         </div>
         <input type="text" id="editor-image-url" placeholder="https://…" style="margin-top:10px" oninput="handleImageUrlInput(this.value)">
       </div>
-
+      <!-- COLLECTION -->
+      <div class="form-row" id="collection-row" style="display:none">
+        <label>Images in collection</label>
+        <div id="collection-drop-zone"
+          onclick="document.getElementById('collection-file-input').click()"
+          ondragover="event.preventDefault();this.classList.add('drag-over')"
+          ondragleave="this.classList.remove('drag-over')"
+          ondrop="handleCollectionDrop(event)"
+          style="border:2px dashed var(--border);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--card-bg);">
+          <div style="font-size:22px;margin-bottom:6px">📁</div>
+          <div style="font-size:13.5px;font-weight:500;color:var(--ink)">Add images to collection</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">Select multiple at once — hold Shift or Cmd/Ctrl to pick several</div>
+          <input type="file" id="collection-file-input" accept="image/*" multiple style="display:none" onchange="handleCollectionFiles(event)">
+        </div>
+        <div class="collection-images-list" id="collection-images-list"></div>
+      </div>
       <!-- TAGS -->
       <div class="form-row">
         <label>Tags</label>
@@ -1214,33 +454,29 @@
           <input class="tags-input" id="tag-input" placeholder="Add tag, press Enter…" onkeydown="handleTagInput(event)">
         </div>
       </div>
-
       <!-- RELATIONS -->
       <div class="form-row">
         <label>Related pieces</label>
-        <div id="relations-selector">
-          <select id="relation-type-select" style="width:auto;display:inline-block;margin-bottom:8px">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px">
+          <select id="relation-type-select" style="width:auto">
             <option value="related">Related to</option>
             <option value="references">References</option>
             <option value="part-of">Part of</option>
             <option value="inspired-by">Inspired by</option>
             <option value="contradicts">Contradicts</option>
           </select>
-          <select id="relation-piece-select" style="width:auto;display:inline-block;margin:0 8px 8px">
-            <option value="">— pick a piece —</option>
-          </select>
-          <button type="button" class="btn btn-ghost" style="padding:6px 14px;font-size:12px" onclick="addRelation()">Add</button>
+          <select id="relation-piece-select" style="width:auto;flex:1"></select>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="addRelation()">Add</button>
         </div>
         <div class="relations-list" id="relations-list"></div>
       </div>
-
       <!-- COMMENTS -->
       <div class="form-row">
         <label>Comments / Annotations</label>
         <div id="comments-list"></div>
         <div class="add-comment-row">
           <input type="text" id="new-comment-input" placeholder="Add an inline comment or annotation…">
-          <button type="button" class="btn btn-ghost" style="padding:8px 14px;font-size:12px" onclick="addComment()">Add</button>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="addComment()">Add</button>
         </div>
       </div>
     </div>
@@ -1259,14 +495,8 @@
       <button class="modal-close" onclick="closeCategoryModal()">✕</button>
     </div>
     <div class="modal-body">
-      <div class="form-row">
-        <label>Name</label>
-        <input type="text" id="cat-name-input" placeholder="e.g. Design, Research, Ideas…">
-      </div>
-      <div class="form-row">
-        <label>Color</label>
-        <div class="cat-color-picker" id="cat-color-picker"></div>
-      </div>
+      <div class="form-row"><label>Name</label><input type="text" id="cat-name-input" placeholder="e.g. Design, Research, Ideas…"></div>
+      <div class="form-row"><label>Color</label><div class="cat-color-picker" id="cat-color-picker"></div></div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeCategoryModal()">Cancel</button>
@@ -1275,13 +505,50 @@
   </div>
 </div>
 
+<!-- OVERVIEW EDIT MODAL -->
+<div id="overview-edit-modal" class="modal-overlay" style="display:none" onclick="modalOverlayClick(event,'overview-edit-modal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3 id="overview-edit-title">Edit overview page</h3>
+      <button class="modal-close" onclick="closeOverviewEditModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <label>Introduction text <span style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;text-transform:none;letter-spacing:0">(Markdown)</span></label>
+        <div class="md-preview-toggle">
+          <button class="md-preview-btn active" id="ov-md-write-btn" onclick="setOvMdMode('write')">Write</button>
+          <button class="md-preview-btn" id="ov-md-preview-btn" onclick="setOvMdMode('preview')">Preview</button>
+        </div>
+        <textarea id="overview-intro-input" style="min-height:140px" placeholder="Introduce this section…"></textarea>
+        <div class="md-preview-pane md-rendered" id="ov-md-preview" style="display:none"></div>
+      </div>
+      <div class="form-row">
+        <label>Related overview pages</label>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px">
+          <select id="ov-rel-type" style="width:auto">
+            <option value="related">Related to</option>
+            <option value="see-also">See also</option>
+            <option value="part-of">Part of</option>
+          </select>
+          <select id="ov-rel-target" style="width:auto;flex:1"></select>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="addOvRelation()">Add</button>
+        </div>
+        <div class="relations-list" id="ov-relations-list"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeOverviewEditModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveOverviewEdit()">Save</button>
+    </div>
+  </div>
+</div>
 <script>
-// ═══════════════════════════════════════════
+// ════════════════════════════════════════
 //  DATA STORE
-// ═══════════════════════════════════════════
-
+// ════════════════════════════════════════
 const STORAGE_KEY = 'library_pieces';
-const CAT_KEY = 'library_categories';
+const CAT_KEY     = 'library_categories';
+const OV_KEY      = 'library_overviews';
 
 const CAT_COLORS = [
   '#c0392b','#e67e22','#f1c40f','#27ae60','#16a085',
@@ -1289,213 +556,280 @@ const CAT_COLORS = [
   '#e91e63','#00bcd4','#4caf50','#ff5722','#9c27b0'
 ];
 
-let pieces = [];
+let pieces     = [];
 let categories = [];
-let currentFilter = 'all';
+let overviews  = {};
+
+let currentFilter         = 'all';
 let currentCategoryFilter = null;
-let currentView = 'grid';
-let currentSearchQuery = '';
-let editingPieceId = null;
-let viewingPieceId = null;
+let currentView           = 'grid';
+let currentSearchQuery    = '';
+let editingPieceId        = null;
+let viewingPieceId        = null;
+let currentOverviewKey    = null;
 
 // Editor state
-let editorTags = [];
-let editorRelations = [];
-let editorComments = [];
-let editorType = 'article';
-let selectedCatColor = CAT_COLORS[0];
+let editorTags             = [];
+let editorRelations        = [];
+let editorComments         = [];
+let editorType             = 'article';
+let editorCategories       = [];
+let editorImageData        = null;
+let editorCollectionImages = [];
+let selectedCatColor       = CAT_COLORS[0];
+let catModalFromEditor     = false;
+let mdMode                 = 'write';
+let ovMdMode               = 'write';
+let ovEditorRelations      = [];
+let currentOvEditKey       = null;
+let ovDragId               = null;
 
-// ═══════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════
-
+// ════════════════════════════════════════
+//  LOAD / SAVE
+// ════════════════════════════════════════
 function loadData() {
-  try {
-    pieces = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    categories = JSON.parse(localStorage.getItem(CAT_KEY) || '[]');
-  } catch(e) {
-    pieces = [];
-    categories = [];
-  }
+  try { pieces     = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e) { pieces = []; }
+  try { categories = JSON.parse(localStorage.getItem(CAT_KEY)     || '[]'); } catch(e) { categories = []; }
+  try { overviews  = JSON.parse(localStorage.getItem(OV_KEY)      || '{}'); } catch(e) { overviews = {}; }
 }
-
 function saveData() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(pieces));
-  localStorage.setItem(CAT_KEY, JSON.stringify(categories));
+  localStorage.setItem(CAT_KEY,     JSON.stringify(categories));
+  localStorage.setItem(OV_KEY,      JSON.stringify(overviews));
 }
 
-// ═══════════════════════════════════════════
-//  TYPE / ICON HELPERS
-// ═══════════════════════════════════════════
+// ════════════════════════════════════════
+//  HELPERS
+// ════════════════════════════════════════
+const TYPE_ICONS = { article:'📄', note:'✏️', image:'🖼️', collection:'🗂️', reference:'🔗', idea:'💡' };
+function typeIcon(t)    { return TYPE_ICONS[t] || '📄'; }
+function escHtml(s)     { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function getCatById(id) { return categories.find(c => c.id === id); }
+function getPrimaryColor(catIds) {
+  if (!catIds || !catIds.length) return 'transparent';
+  const cat = getCatById(catIds[0]);
+  return cat ? cat.color : 'transparent';
+}
 
-const TYPE_ICONS = {
-  article: '📄',
-  note: '✏️',
-  image: '🖼️',
-  reference: '🔗',
-  idea: '💡'
-};
+// ════════════════════════════════════════
+//  MARKDOWN RENDERER
+// ════════════════════════════════════════
+function renderMd(raw) {
+  if (!raw) return '';
+  // Escape HTML but we need to process markdown, so work in stages
+  let t = raw;
 
-function typeIcon(t) { return TYPE_ICONS[t] || '📄'; }
+  // Protect code blocks first
+  const codeBlocks = [];
+  t = t.replace(/```([\s\S]*?)```/g, (_, code) => {
+    codeBlocks.push(code);
+    return `%%CODEBLOCK${codeBlocks.length - 1}%%`;
+  });
+  const inlineCodes = [];
+  t = t.replace(/`([^`\n]+)`/g, (_, code) => {
+    inlineCodes.push(escHtml(code));
+    return `%%INLINECODE${inlineCodes.length - 1}%%`;
+  });
 
-// ═══════════════════════════════════════════
-//  FILTER & SORT
-// ═══════════════════════════════════════════
+  // Escape remaining HTML
+  t = t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
+  // Tables (must come before paragraph logic)
+  t = t.replace(/(\|.+\|\n\|[-| :]+\|\n(?:\|.+\|\n?)+)/g, m => {
+    const rows = m.trim().split('\n');
+    const ths  = rows[0].split('|').slice(1,-1).map(c => `<th>${c.trim()}</th>`).join('');
+    const body = rows.slice(2).map(r =>
+      '<tr>' + r.split('|').slice(1,-1).map(c => `<td>${c.trim()}</td>`).join('') + '</tr>'
+    ).join('');
+    return `<table><thead><tr>${ths}</tr></thead><tbody>${body}</tbody></table>\n`;
+  });
+
+  // Headings
+  t = t.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+  t = t.replace(/^## (.+)$/gm,  '<h2>$1</h2>');
+  t = t.replace(/^# (.+)$/gm,   '<h1>$1</h1>');
+
+  // Blockquote
+  t = t.replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>');
+
+  // HR
+  t = t.replace(/^---$/gm, '<hr>');
+
+  // Bold + italic
+  t = t.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+  t = t.replace(/\*\*(.+?)\*\*/g,     '<strong>$1</strong>');
+  t = t.replace(/\*(.+?)\*/g,         '<em>$1</em>');
+
+  // Links
+  t = t.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+
+  // Unordered lists
+  t = t.replace(/((?:^- .+$\n?)+)/gm, m => {
+    const items = m.trim().split('\n').map(l => `<li>${l.slice(2)}</li>`).join('');
+    return `<ul>${items}</ul>\n`;
+  });
+
+  // Ordered lists
+  t = t.replace(/((?:^\d+\. .+$\n?)+)/gm, m => {
+    const items = m.trim().split('\n').map(l => `<li>${l.replace(/^\d+\. /, '')}</li>`).join('');
+    return `<ol>${items}</ol>\n`;
+  });
+
+  // Paragraphs (double newline between non-block elements)
+  t = t.split(/\n{2,}/).map(block => {
+    block = block.trim();
+    if (!block) return '';
+    if (/^<(h[1-6]|ul|ol|blockquote|table|hr|pre)/.test(block)) return block;
+    return `<p>${block.replace(/\n/g, '<br>')}</p>`;
+  }).join('\n');
+
+  // Restore code blocks
+  codeBlocks.forEach((code, i) => {
+    t = t.replace(`%%CODEBLOCK${i}%%`, `<pre><code>${escHtml(code.replace(/^\w*\n/, ''))}</code></pre>`);
+  });
+  inlineCodes.forEach((code, i) => {
+    t = t.replace(`%%INLINECODE${i}%%`, `<code>${code}</code>`);
+  });
+
+  return t;
+}
+
+// ════════════════════════════════════════
+//  FILTER / SORT
+// ════════════════════════════════════════
 function setFilter(filter, el) {
   currentFilter = filter;
   currentCategoryFilter = null;
   document.querySelectorAll('.sidebar-nav-item').forEach(n => n.classList.remove('active'));
   el.classList.add('active');
   document.querySelectorAll('.cat-item').forEach(c => c.classList.remove('active'));
-  const labels = { all: 'All pieces', article: 'Articles', note: 'Notes', image: 'Images', reference: 'References', idea: 'Ideas' };
+  const labels = { all:'All pieces', article:'Articles', note:'Notes', image:'Images', collection:'Collections', reference:'References', idea:'Ideas' };
   document.getElementById('topbar-title').textContent = labels[filter] || filter;
   renderPieces();
 }
-
 function setCatFilter(catId) {
   currentCategoryFilter = catId;
   currentFilter = 'all';
   document.querySelectorAll('.sidebar-nav-item').forEach(n => n.classList.remove('active'));
-  document.querySelectorAll('.cat-item').forEach(c => {
-    c.classList.toggle('active', c.dataset.catId === catId);
-  });
-  const cat = categories.find(c => c.id === catId);
+  document.querySelectorAll('.cat-item').forEach(c => c.classList.toggle('active', c.dataset.catId === catId));
+  const cat = getCatById(catId);
   document.getElementById('topbar-title').textContent = cat ? cat.name : '';
   renderPieces();
 }
-
 function getFilteredPieces() {
   let list = [...pieces];
   if (currentFilter !== 'all') list = list.filter(p => p.type === currentFilter);
-  if (currentCategoryFilter) list = list.filter(p => p.category === currentCategoryFilter);
+  if (currentCategoryFilter)   list = list.filter(p => (p.categories||[]).includes(currentCategoryFilter));
   if (currentSearchQuery) {
     const q = currentSearchQuery.toLowerCase();
     list = list.filter(p =>
       p.title.toLowerCase().includes(q) ||
-      (p.content || '').toLowerCase().includes(q) ||
-      (p.tags || []).some(t => t.toLowerCase().includes(q))
+      (p.content||'').toLowerCase().includes(q) ||
+      (p.tags||[]).some(t => t.toLowerCase().includes(q))
     );
   }
   const sort = document.getElementById('sort-select').value;
-  if (sort === 'date-desc') list.sort((a,b) => b.createdAt - a.createdAt);
-  else if (sort === 'date-asc') list.sort((a,b) => a.createdAt - b.createdAt);
-  else if (sort === 'title-asc') list.sort((a,b) => a.title.localeCompare(b.title));
+  if      (sort === 'date-desc')  list.sort((a,b) => b.createdAt - a.createdAt);
+  else if (sort === 'date-asc')   list.sort((a,b) => a.createdAt - b.createdAt);
+  else if (sort === 'title-asc')  list.sort((a,b) => a.title.localeCompare(b.title));
   else if (sort === 'title-desc') list.sort((a,b) => b.title.localeCompare(a.title));
-  else if (sort === 'type') list.sort((a,b) => a.type.localeCompare(b.type));
+  else if (sort === 'type')       list.sort((a,b) => a.type.localeCompare(b.type));
   return list;
 }
+function onSearch(val) { currentSearchQuery = val; renderPieces(); }
 
-function onSearch(val) {
-  currentSearchQuery = val;
-  renderPieces();
-}
-
-// ═══════════════════════════════════════════
-//  RENDER
-// ═══════════════════════════════════════════
-
+// ════════════════════════════════════════
+//  SIDEBAR
+// ════════════════════════════════════════
 function renderSidebar() {
-  // Counts
   document.getElementById('count-all').textContent = pieces.length;
-  ['article','note','image','reference','idea'].forEach(t => {
-    document.getElementById('count-' + t).textContent = pieces.filter(p => p.type === t).length;
+  ['article','note','image','collection','reference','idea'].forEach(t => {
+    const el = document.getElementById('count-' + t);
+    if (el) el.textContent = pieces.filter(p => p.type === t).length;
   });
   document.getElementById('piece-count-label').textContent = pieces.length + ' piece' + (pieces.length !== 1 ? 's' : '');
 
-  // Categories
-  const container = document.getElementById('sidebar-categories');
-  container.innerHTML = categories.map(cat => `
+  document.getElementById('sidebar-categories').innerHTML = categories.map(cat => `
     <div class="cat-item" data-cat-id="${cat.id}" onclick="setCatFilter('${cat.id}')">
       <span class="cat-dot" style="background:${cat.color}"></span>
-      <span>${cat.name}</span>
-      <span style="margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,0.3)">${pieces.filter(p=>p.category===cat.id).length}</span>
-    </div>
-  `).join('');
+      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(cat.name)}</span>
+      <span style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,0.3)">${pieces.filter(p=>(p.categories||[]).includes(cat.id)).length}</span>
+    </div>`).join('');
+}
 
-  // Category selects in editor
-  const catSel = document.getElementById('editor-category');
-  const prev = catSel.value;
-  catSel.innerHTML = '<option value="">— none —</option>' + categories.map(c =>
-    `<option value="${c.id}">${c.name}</option>`
-  ).join('');
-  catSel.value = prev;
+// ════════════════════════════════════════
+//  CARDS
+// ════════════════════════════════════════
+function catChipsHtml(catIds) {
+  return (catIds||[]).slice(0,3).map(id => {
+    const cat = getCatById(id);
+    return cat ? `<span class="tag-pill" style="background:${cat.color}20;color:${cat.color}">${escHtml(cat.name)}</span>` : '';
+  }).join('');
 }
 
 function renderPieces() {
   renderSidebar();
   const list = getFilteredPieces();
   const grid = document.getElementById('pieces-grid');
-
   if (!list.length) {
-    grid.innerHTML = `
-      <div id="empty-state" style="grid-column:1/-1">
-        <div class="empty-icon">${currentSearchQuery ? '🔍' : '📚'}</div>
-        <h3>${currentSearchQuery ? 'No results found' : 'Your library is empty'}</h3>
-        <p>${currentSearchQuery ? 'Try different search terms or clear the filter.' : 'Start building your knowledge base by adding your first piece.'}</p>
-        ${!currentSearchQuery ? '<button onclick="openEditorModal()">Add first piece</button>' : ''}
-      </div>`;
+    grid.className = 'pieces-grid';
+    grid.innerHTML = `<div id="empty-state">
+      <div class="empty-icon">${currentSearchQuery ? '🔍' : '📚'}</div>
+      <h3>${currentSearchQuery ? 'No results' : 'Your library is empty'}</h3>
+      <p>${currentSearchQuery ? 'Try different keywords.' : 'Add your first piece to get started.'}</p>
+      ${!currentSearchQuery ? '<button onclick="openEditorModal()">Add first piece</button>' : ''}
+    </div>`;
     return;
   }
-
-  grid.className = 'pieces-grid' + (currentView === 'list' ? ' list-view' : '');
-
-  if (currentView === 'list') {
-    grid.innerHTML = list.map(p => renderListCard(p)).join('');
-  } else {
-    grid.innerHTML = list.map(p => renderGridCard(p)).join('');
-  }
-}
-
-function getCatColor(catId) {
-  if (!catId) return 'transparent';
-  const cat = categories.find(c => c.id === catId);
-  return cat ? cat.color : 'transparent';
+  grid.className = currentView === 'list' ? 'pieces-grid list-view' : 'pieces-grid';
+  grid.innerHTML = list.map(p => currentView === 'list' ? renderListCard(p) : renderGridCard(p)).join('');
 }
 
 function renderGridCard(p) {
-  const excerpt = (p.content || '').replace(/\n/g, ' ').substring(0, 140);
-  const date = new Date(p.createdAt).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
-  const tags = (p.tags || []).slice(0,3).map(t => `<span class="tag-pill">${t}</span>`).join('');
-  const catColor = getCatColor(p.category);
-  return `
-    <div class="piece-card" onclick="openDetail('${p.id}')">
-      <div class="cat-strip" style="background:${catColor}"></div>
-      <div class="card-type-badge">${typeIcon(p.type)} ${p.type}</div>
-      <div class="card-title">${escHtml(p.title)}</div>
-      ${excerpt ? `<div class="card-excerpt">${escHtml(excerpt)}</div>` : ''}
-      <div class="card-meta">
-        ${tags}
-        <span class="card-date">${date}</span>
-      </div>
-    </div>`;
+  const excerpt = (p.content||'').replace(/[#*`>|\-]/g,'').replace(/\n/g,' ').substring(0,140);
+  const date    = new Date(p.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+  const tags    = (p.tags||[]).slice(0,3).map(t => `<span class="tag-pill">${escHtml(t)}</span>`).join('');
+  const primary = getPrimaryColor(p.categories);
+
+  let collectionStrip = '';
+  if (p.type === 'collection' && (p.collectionImages||[]).length) {
+    const thumbs = p.collectionImages.slice(0,4).map(img => {
+      const src = img.data || img.url;
+      return `<div class="card-collection-thumb">${src ? `<img src="${src}" alt="">` : ''}</div>`;
+    }).join('');
+    const extra = p.collectionImages.length > 4 ? `<div class="card-collection-more">+${p.collectionImages.length - 4}</div>` : '';
+    collectionStrip = `<div class="card-collection-strip">${thumbs}${extra}</div>`;
+  }
+
+  return `<div class="piece-card" onclick="openDetail('${p.id}')">
+    <div class="cat-strip" style="background:${primary}"></div>
+    <div class="card-type-badge">${typeIcon(p.type)} ${p.type}</div>
+    ${collectionStrip}
+    <div class="card-title">${escHtml(p.title)}</div>
+    ${excerpt && p.type !== 'collection' ? `<div class="card-excerpt">${escHtml(excerpt)}</div>` : ''}
+    <div class="card-meta">${catChipsHtml(p.categories)}${tags}<span class="card-date">${date}</span></div>
+  </div>`;
 }
 
 function renderListCard(p) {
-  const excerpt = (p.content || '').replace(/\n/g, ' ').substring(0, 120);
-  const date = new Date(p.createdAt).toLocaleDateString('en-GB', {day:'numeric',month:'short'});
-  const tags = (p.tags || []).slice(0,2).map(t => `<span class="tag-pill">${t}</span>`).join('');
-  const catColor = getCatColor(p.category);
-  return `
-    <div class="piece-card" onclick="openDetail('${p.id}')">
-      <div class="cat-strip" style="background:${catColor}"></div>
-      <div class="card-left">${typeIcon(p.type)}</div>
-      <div class="card-main">
-        <div class="card-title">${escHtml(p.title)}</div>
-        ${excerpt ? `<div class="card-excerpt">${escHtml(excerpt)}</div>` : ''}
-        <div class="card-meta">${tags}</div>
-      </div>
-      <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-        <span class="card-date">${date}</span>
-        ${p.relations?.length ? `<span style="font-size:10px;color:var(--muted)">🔗 ${p.relations.length}</span>` : ''}
-        ${p.comments?.length ? `<span style="font-size:10px;color:var(--muted)">💬 ${p.comments.length}</span>` : ''}
-      </div>
-    </div>`;
+  const excerpt = (p.content||'').replace(/[#*`>|\-]/g,'').replace(/\n/g,' ').substring(0,100);
+  const date    = new Date(p.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+  const primary = getPrimaryColor(p.categories);
+  const tags    = (p.tags||[]).slice(0,2).map(t => `<span class="tag-pill">${escHtml(t)}</span>`).join('');
+  return `<div class="piece-card" onclick="openDetail('${p.id}')">
+    <div class="cat-strip" style="background:${primary}"></div>
+    <div class="card-left">${typeIcon(p.type)}</div>
+    <div class="card-main">
+      <div class="card-title">${escHtml(p.title)}</div>
+      ${excerpt ? `<div class="card-excerpt">${escHtml(excerpt)}</div>` : ''}
+      <div class="card-meta">${catChipsHtml(p.categories)}${tags}</div>
+    </div>
+    <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+      <span class="card-date">${date}</span>
+      ${(p.relations||[]).length ? `<span style="font-size:10px;color:var(--muted)">🔗 ${p.relations.length}</span>` : ''}
+    </div>
+  </div>`;
 }
-
-// ═══════════════════════════════════════════
-//  VIEW TOGGLE
-// ═══════════════════════════════════════════
 
 function setView(v) {
   currentView = v;
@@ -1504,516 +838,777 @@ function setView(v) {
   renderPieces();
 }
 
-// ═══════════════════════════════════════════
+// ════════════════════════════════════════
 //  DETAIL VIEW
-// ═══════════════════════════════════════════
-
+// ════════════════════════════════════════
 function openDetail(id) {
   const p = pieces.find(x => x.id === id);
   if (!p) return;
   viewingPieceId = id;
 
-  const cat = p.category ? categories.find(c => c.id === p.category) : null;
-  const date = new Date(p.createdAt).toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'});
+  const cats = (p.categories||[]).map(cid => getCatById(cid)).filter(Boolean);
+  const date = new Date(p.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
 
-  let relationsHtml = '';
-  // Forward relations (defined on this piece)
-  const fwdRelations = p.relations || [];
-  // Back-relations (other pieces that reference this one)
-  const backRelations = pieces
-    .filter(x => x.id !== p.id && (x.relations || []).some(r => r.pieceId === p.id))
-    .map(x => ({
-      piece: x,
-      relationType: x.relations.find(r => r.pieceId === p.id).relationType
-    }));
-
-  const allRelations = [
-    ...fwdRelations.map(r => ({ pieceId: r.pieceId, relationType: r.relationType, direction: 'forward' })),
-    ...backRelations.map(r => ({ pieceId: r.piece.id, relationType: r.relationType, direction: 'back' }))
+  // Bidirectional relations
+  const fwdRel  = p.relations || [];
+  const backRel = pieces.filter(x => x.id !== p.id && (x.relations||[]).some(r => r.pieceId === p.id));
+  const allRel  = [
+    ...fwdRel.map(r  => ({ pieceId: r.pieceId,  relationType: r.relationType,  dir: 'fwd' })),
+    ...backRel.map(x => ({ pieceId: x.id, relationType: x.relations.find(r => r.pieceId === p.id).relationType, dir: 'back' }))
   ];
 
-  if (allRelations.length) {
-    relationsHtml = `
-      <div class="detail-divider"></div>
-      <div class="detail-section-title">Related pieces</div>
-      <div class="detail-relations">
-        ${allRelations.map(r => {
-          const related = pieces.find(x => x.id === r.pieceId);
-          if (!related) return '';
-          const dirLabel = r.direction === 'back'
-            ? `<span class="back-relation-badge">← referenced as "${r.relationType}"</span>`
-            : `<span class="relation-label">${r.relationType}</span>`;
-          return `
-            <div class="detail-relation-card" onclick="openDetail('${related.id}')">
-              <div class="detail-relation-icon">${typeIcon(related.type)}</div>
-              <div class="detail-relation-info">
-                <div class="detail-relation-rel">${dirLabel}</div>
-                <div class="detail-relation-title">${escHtml(related.title)}</div>
-              </div>
-              <span style="color:var(--muted)">→</span>
-            </div>`;
-        }).join('')}
+  // Quicklinks — only for sections that exist
+  const sections = [];
+  const hasContent = p.content || (p.type === 'collection' && (p.collectionImages||[]).length) || (p.type === 'image' && (p.imageData || p.imageUrl));
+  if (hasContent)        sections.push(['content',   'Content']);
+  if (allRel.length)     sections.push(['relations', 'Related pieces']);
+  if ((p.comments||[]).length) sections.push(['comments', 'Comments']);
+  const quicklinks = sections.map(([sid, label]) =>
+    `<span class="detail-ql" onclick="scrollToSection('${sid}')">↓ ${label}</span>`
+  ).join('');
+
+  // Clickable meta chips
+  const typeChip = `<span class="detail-type-chip" onclick="openOverview('type','${p.type}')">${typeIcon(p.type)} ${p.type}</span>`;
+  const catChips = cats.map(cat =>
+    `<span class="detail-cat-chip" onclick="openOverview('cat','${cat.id}')" style="background:${cat.color}20;border-color:${cat.color}40">
+      <span style="width:8px;height:8px;border-radius:50%;background:${cat.color};display:inline-block"></span>${escHtml(cat.name)}
+    </span>`
+  ).join('');
+  const tagChips = (p.tags||[]).map(t =>
+    `<span class="detail-tag-chip" onclick="openOverview('tag','${encodeURIComponent(t)}')">${escHtml(t)}</span>`
+  ).join('');
+  const sourceHtml = p.source ? `<a href="${p.source}" target="_blank" class="source-link">🔗 Source</a>` : '';
+
+  // Content block
+  let contentHtml = '';
+  if (p.type === 'collection' && (p.collectionImages||[]).length) {
+    const galleryItems = p.collectionImages.map(img => {
+      const src      = img.data || img.url;
+      const tagPills = (img.tags||[]).map(t => `<span class="tag-pill" style="font-size:9px;padding:1px 6px">${escHtml(t)}</span>`).join('');
+      const safeCaption = (img.caption||'').replace(/'/g, "\\'");
+      const safeSrc = src ? src.substring(0, 200) : '';
+      return `<div class="collection-gallery-item" onclick="openLightbox('${safeSrc}','${safeCaption}')">
+        ${src ? `<img src="${src}" alt="${escHtml(img.caption||'')}" onerror="this.parentElement.style.display='none'">` : '<div style="height:160px;display:flex;align-items:center;justify-content:center;font-size:32px">🖼️</div>'}
+        ${img.caption ? `<div class="collection-gallery-caption">${escHtml(img.caption)}</div>` : ''}
+        ${tagPills ? `<div class="collection-gallery-tags">${tagPills}</div>` : ''}
       </div>`;
-  }
-
-  let commentsHtml = '';
-  if (p.comments && p.comments.length) {
-    commentsHtml = `
-      <div class="detail-divider"></div>
-      <div class="detail-section-title">Comments & Annotations</div>
-      ${p.comments.map((c,i) => `
-        <div class="comment-item">
-          <div class="comment-meta">Annotation · ${new Date(c.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div>
-          <div class="comment-text">${escHtml(c.text)}</div>
-        </div>
-      `).join('')}`;
-  }
-
-  let imageHtml = '';
-  if (p.type === 'image') {
+    }).join('');
+    contentHtml = `<div id="section-content"><div class="collection-gallery">${galleryItems}</div></div>`;
+    if (p.content) contentHtml += `<div class="detail-body md-rendered" style="margin-top:16px">${renderMd(p.content)}</div>`;
+  } else if (p.type === 'image') {
     const imgSrc = p.imageData || p.imageUrl;
-    if (imgSrc) imageHtml = `<img src="${imgSrc}" class="image-preview" alt="${escHtml(p.title)}" onclick="openLightbox(this.src)" onerror="this.style.display='none'" title="Click to view full screen">`;
+    if (imgSrc) {
+      const safeSrc = imgSrc.startsWith('data:') ? imgSrc : imgSrc;
+      contentHtml = `<div id="section-content"><img src="${safeSrc}" class="image-preview" onclick="openLightbox(this.src,'')" onerror="this.style.display='none'" title="Click to view full screen"></div>`;
+    }
+    if (p.content) contentHtml += `<div class="detail-body md-rendered">${renderMd(p.content)}</div>`;
+  } else if (p.content) {
+    contentHtml = `<div id="section-content" class="detail-body md-rendered">${renderMd(p.content)}</div>`;
   }
 
-  let sourceHtml = '';
-  if (p.source) {
-    sourceHtml = `<a href="${p.source}" target="_blank" class="source-link">🔗 Source</a>`;
+  // Relations block
+  let relationsHtml = '';
+  if (allRel.length) {
+    const cards = allRel.map(r => {
+      const rel = pieces.find(x => x.id === r.pieceId);
+      if (!rel) return '';
+      const badge = r.dir === 'back'
+        ? `<span class="back-relation-badge">← referenced as "${escHtml(r.relationType)}"</span>`
+        : `<span class="relation-label">${escHtml(r.relationType)}</span>`;
+      return `<div class="detail-relation-card" onclick="openDetail('${rel.id}')">
+        <div class="detail-relation-icon">${typeIcon(rel.type)}</div>
+        <div class="detail-relation-info">
+          <div class="detail-relation-rel">${badge}</div>
+          <div class="detail-relation-title">${escHtml(rel.title)}</div>
+        </div>
+        <span style="color:var(--muted)">→</span>
+      </div>`;
+    }).join('');
+    relationsHtml = `<div id="section-relations"><div class="detail-divider"></div>
+      <div class="detail-section-title">Related pieces</div>
+      <div class="detail-relations">${cards}</div></div>`;
   }
 
-  document.getElementById('detail-breadcrumb').textContent = cat ? cat.name : '';
+  // Comments block
+  let commentsHtml = '';
+  if ((p.comments||[]).length) {
+    commentsHtml = `<div id="section-comments"><div class="detail-divider"></div>
+      <div class="detail-section-title">Comments & Annotations</div>
+      ${p.comments.map(c => `<div class="comment-item">
+        <div class="comment-meta">Annotation · ${new Date(c.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div>
+        <div class="comment-text">${escHtml(c.text)}</div>
+      </div>`).join('')}
+    </div>`;
+  }
+
+  document.getElementById('detail-breadcrumb').textContent = cats.map(c => c.name).join(', ');
   document.getElementById('detail-content').innerHTML = `
-    <div class="detail-type">
-      ${typeIcon(p.type)} ${p.type}
-      ${cat ? `<span style="display:inline-flex;align-items:center;gap:4px;margin-left:8px"><span style="width:8px;height:8px;border-radius:50%;background:${cat.color};display:inline-block"></span>${cat.name}</span>` : ''}
-    </div>
+    ${quicklinks ? `<div class="detail-quicklinks">${quicklinks}</div>` : ''}
+    <div class="detail-meta-row">${typeChip}${catChips}${tagChips}${sourceHtml}</div>
     <h1>${escHtml(p.title)}</h1>
-    <div class="detail-meta-row">
-      <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">${date}</span>
-      ${(p.tags||[]).map(t=>`<span class="tag-pill">${t}</span>`).join('')}
-      ${sourceHtml}
-    </div>
-    ${imageHtml}
-    ${p.content ? `<div class="detail-body">${escHtml(p.content)}</div>` : ''}
+    <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:24px">${date}</div>
+    ${contentHtml}
     ${relationsHtml}
     ${commentsHtml}
+    <span class="back-to-top" onclick="document.getElementById('detail-content').scrollTo({top:0,behavior:'smooth'})">↑ Back to top</span>
   `;
 
+  // Close overview if open, then show detail
+  document.getElementById('overview-view').style.display = 'none';
   document.getElementById('detail-view').style.display = 'flex';
   document.getElementById('detail-view').style.flexDirection = 'column';
+  document.getElementById('detail-content').scrollTop = 0;
 }
 
-function closeDetail() {
-  document.getElementById('detail-view').style.display = 'none';
-  viewingPieceId = null;
+function scrollToSection(id) {
+  const el = document.getElementById('section-' + id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
+
+function closeDetail() { document.getElementById('detail-view').style.display = 'none'; viewingPieceId = null; }
 
 function editCurrentPiece() {
-  if (viewingPieceId) {
-    const idToEdit = viewingPieceId;
-    closeDetail();
-    openEditorModal(idToEdit);
-  }
+  if (viewingPieceId) { const id = viewingPieceId; closeDetail(); openEditorModal(id); }
 }
-
 function deleteCurrentPiece() {
   if (!viewingPieceId) return;
   const p = pieces.find(x => x.id === viewingPieceId);
-  if (!p) return;
-  if (!confirm(`Delete "${p.title}"? This cannot be undone.`)) return;
+  if (!p || !confirm(`Delete "${p.title}"? This cannot be undone.`)) return;
   pieces = pieces.filter(x => x.id !== viewingPieceId);
-  // Remove relations pointing to this piece
-  pieces.forEach(x => {
-    if (x.relations) x.relations = x.relations.filter(r => r.pieceId !== viewingPieceId);
-  });
-  saveData();
-  closeDetail();
-  renderPieces();
+  pieces.forEach(x => { if (x.relations) x.relations = x.relations.filter(r => r.pieceId !== viewingPieceId); });
+  saveData(); closeDetail(); renderPieces();
 }
 
-// ═══════════════════════════════════════════
-//  EDITOR MODAL
-// ═══════════════════════════════════════════
+// ════════════════════════════════════════
+//  SUB-OVERVIEW PAGES
+// ════════════════════════════════════════
+function ovKey(kind, id) { return kind + ':' + id; }
 
+function openOverview(kind, rawId) {
+  const id  = decodeURIComponent(rawId);
+  const key = ovKey(kind, kind === 'tag' ? encodeURIComponent(id) : id);
+  currentOverviewKey = key;
+  const ov  = overviews[key] || {};
+
+  // Title + pieces
+  let title = '', piecesInOv = [];
+  if (kind === 'type') {
+    title = { article:'Articles', note:'Notes', image:'Images', collection:'Collections', reference:'References', idea:'Ideas' }[id] || id;
+    piecesInOv = pieces.filter(p => p.type === id);
+  } else if (kind === 'cat') {
+    const cat = getCatById(id);
+    title      = cat ? cat.name : id;
+    piecesInOv = pieces.filter(p => (p.categories||[]).includes(id));
+  } else if (kind === 'tag') {
+    title      = id;
+    piecesInOv = pieces.filter(p => (p.tags||[]).includes(id));
+  }
+
+  // Apply manual order
+  const order = ov.order || [];
+  if (order.length) {
+    piecesInOv.sort((a, b) => {
+      const ai = order.indexOf(a.id), bi = order.indexOf(b.id);
+      if (ai === -1 && bi === -1) return 0;
+      if (ai === -1) return 1;
+      if (bi === -1) return -1;
+      return ai - bi;
+    });
+  }
+
+  // Intro
+  const introHtml = ov.intro
+    ? `<div class="overview-intro-text md-rendered">${renderMd(ov.intro)}</div>`
+    : `<p style="font-size:13px;color:var(--muted);font-style:italic;margin-bottom:20px">No introduction yet — click Edit page to add one.</p>`;
+
+  // Overview-to-overview relations
+  const ovRelHtml = (ov.relations||[]).map(r => {
+    const [rk, ri]  = r.targetKey.split(':');
+    const did       = decodeURIComponent(ri);
+    let   rLabel    = did;
+    if (rk === 'cat') { const c = getCatById(did); rLabel = c ? c.name : did; }
+    return `<div class="detail-relation-card" onclick="openOverview('${rk}','${escHtml(ri)}')">
+      <div class="detail-relation-icon">📑</div>
+      <div class="detail-relation-info">
+        <div class="detail-relation-rel">${escHtml(r.relationType)}</div>
+        <div class="detail-relation-title">${escHtml(rLabel)}</div>
+      </div>
+      <span style="color:var(--muted)">→</span>
+    </div>`;
+  }).join('');
+
+  // Piece list with drag handles + move buttons
+  const pieceItems = piecesInOv.map((p, i) => {
+    const cats = (p.categories||[]).map(cid => getCatById(cid)).filter(Boolean);
+    return `<div class="overview-piece-item" data-piece-id="${p.id}"
+      draggable="true"
+      ondragstart="ovDragStart(event,'${p.id}')"
+      ondragover="ovDragOver(event)"
+      ondrop="ovDrop(event,'${p.id}')"
+      ondragleave="ovDragLeave(event)"
+      ondragend="ovDragEnd(event)">
+      <span class="overview-piece-drag" title="Drag to reorder">⠿</span>
+      <div class="overview-piece-icon">${typeIcon(p.type)}</div>
+      <div class="overview-piece-info" onclick="openDetail('${p.id}')">
+        <div class="overview-piece-title">${escHtml(p.title)}</div>
+        <div class="overview-piece-meta">${cats.map(c=>c.name).join(', ')||p.type}${(p.tags||[]).length ? ' · ' + (p.tags||[]).slice(0,3).join(', ') : ''}</div>
+      </div>
+      <div class="overview-move-btns">
+        <button class="overview-move-btn" onclick="ovMoveUp(${i})" ${i===0?'disabled':''}>↑</button>
+        <button class="overview-move-btn" onclick="ovMoveDown(${i})" ${i===piecesInOv.length-1?'disabled':''}>↓</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('overview-breadcrumb').textContent = title;
+  document.getElementById('overview-actions').innerHTML =
+    `<button class="btn btn-ghost" onclick="openOverviewEditModal()">✏️ Edit page</button>`;
+
+  document.getElementById('overview-content').innerHTML = `
+    <div style="margin-bottom:12px"><span class="detail-type-chip">${kind==='type'?typeIcon(id)+' ':kind==='cat'?'🏷 ':'🔖 '}${escHtml(title)}</span></div>
+    <h1 style="font-family:'Playfair Display',serif;font-size:28px;margin-bottom:20px">${escHtml(title)}</h1>
+    ${introHtml}
+    ${ovRelHtml ? `<div style="margin-bottom:28px"><div class="detail-section-title">Related overview pages</div><div class="detail-relations">${ovRelHtml}</div></div>` : ''}
+    <div class="detail-section-title" style="margin-bottom:12px">${piecesInOv.length} piece${piecesInOv.length!==1?'s':''} — drag or use arrows to reorder</div>
+    <div class="overview-piece-order" id="overview-piece-order">
+      ${pieceItems || '<p style="font-size:13px;color:var(--muted);padding:20px 0">No pieces in this section yet.</p>'}
+    </div>
+  `;
+
+  document.getElementById('detail-view').style.display = 'none';
+  document.getElementById('overview-view').style.display = 'flex';
+  document.getElementById('overview-view').style.flexDirection = 'column';
+  document.getElementById('overview-content').scrollTop = 0;
+}
+
+function closeOverview() { document.getElementById('overview-view').style.display = 'none'; currentOverviewKey = null; }
+
+// Drag-to-reorder
+function ovDragStart(e, id) {
+  ovDragId = id;
+  e.currentTarget.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+}
+function ovDragOver(e)  { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+function ovDragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+function ovDragEnd(e)   { e.currentTarget.classList.remove('dragging'); }
+function ovDrop(e, targetId) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  if (!ovDragId || ovDragId === targetId) return;
+  const items = [...document.querySelectorAll('#overview-piece-order .overview-piece-item')].map(el => el.dataset.pieceId);
+  const from  = items.indexOf(ovDragId), to = items.indexOf(targetId);
+  if (from === -1 || to === -1) return;
+  items.splice(from, 1);
+  items.splice(to, 0, ovDragId);
+  const ov   = overviews[currentOverviewKey] || {};
+  ov.order   = items;
+  overviews[currentOverviewKey] = ov;
+  saveData();
+  const [k, i] = currentOverviewKey.split(':');
+  openOverview(k, i);
+}
+function ovMoveUp(i) {
+  const items = [...document.querySelectorAll('#overview-piece-order .overview-piece-item')].map(el => el.dataset.pieceId);
+  if (i === 0) return;
+  [items[i-1], items[i]] = [items[i], items[i-1]];
+  const ov = overviews[currentOverviewKey] || {};
+  ov.order = items;
+  overviews[currentOverviewKey] = ov;
+  saveData();
+  const [k, id] = currentOverviewKey.split(':');
+  openOverview(k, id);
+}
+function ovMoveDown(i) {
+  const items = [...document.querySelectorAll('#overview-piece-order .overview-piece-item')].map(el => el.dataset.pieceId);
+  if (i >= items.length - 1) return;
+  [items[i], items[i+1]] = [items[i+1], items[i]];
+  const ov = overviews[currentOverviewKey] || {};
+  ov.order = items;
+  overviews[currentOverviewKey] = ov;
+  saveData();
+  const [k, id] = currentOverviewKey.split(':');
+  openOverview(k, id);
+}
+
+// Overview edit modal
+function openOverviewEditModal() {
+  currentOvEditKey  = currentOverviewKey;
+  const ov          = overviews[currentOvEditKey] || {};
+  ovEditorRelations = [...(ov.relations||[])];
+
+  document.getElementById('overview-intro-input').value = ov.intro || '';
+  setOvMdMode('write');
+
+  // Build all possible overview targets
+  const targets = [];
+  ['article','note','image','collection','reference','idea'].forEach(t =>
+    targets.push({ key: ovKey('type', t), label: t })
+  );
+  categories.forEach(c => targets.push({ key: ovKey('cat', c.id), label: c.name }));
+  [...new Set(pieces.flatMap(p => p.tags||[]))].forEach(t =>
+    targets.push({ key: ovKey('tag', encodeURIComponent(t)), label: t })
+  );
+
+  document.getElementById('ov-rel-target').innerHTML =
+    '<option value="">— pick overview —</option>' +
+    targets.filter(t => t.key !== currentOvEditKey)
+           .map(t => `<option value="${t.key}">${escHtml(t.label)}</option>`).join('');
+
+  renderOvRelations();
+  document.getElementById('overview-edit-modal').style.display = 'flex';
+}
+function closeOverviewEditModal() { document.getElementById('overview-edit-modal').style.display = 'none'; }
+
+function setOvMdMode(mode) {
+  ovMdMode = mode;
+  const ta   = document.getElementById('overview-intro-input');
+  const pane = document.getElementById('ov-md-preview');
+  document.getElementById('ov-md-write-btn').classList.toggle('active',   mode === 'write');
+  document.getElementById('ov-md-preview-btn').classList.toggle('active', mode === 'preview');
+  if (mode === 'preview') { pane.innerHTML = renderMd(ta.value); pane.style.display = 'block'; ta.style.display = 'none'; }
+  else                    { pane.style.display = 'none'; ta.style.display = 'block'; ta.focus(); }
+}
+
+function addOvRelation() {
+  const type   = document.getElementById('ov-rel-type').value;
+  const target = document.getElementById('ov-rel-target').value;
+  if (!target) return;
+  if (ovEditorRelations.find(r => r.targetKey === target && r.relationType === type)) return;
+  ovEditorRelations.push({ relationType: type, targetKey: target });
+  renderOvRelations();
+}
+function removeOvRelation(i) { ovEditorRelations.splice(i, 1); renderOvRelations(); }
+function renderOvRelations() {
+  document.getElementById('ov-relations-list').innerHTML = ovEditorRelations.map((r, i) => {
+    const [rk, ri] = r.targetKey.split(':');
+    const did  = decodeURIComponent(ri);
+    let label  = did;
+    if (rk === 'cat') { const c = getCatById(did); label = c ? c.name : did; }
+    return `<div class="relation-item">
+      <span class="relation-label">${escHtml(r.relationType)}</span>
+      <span class="relation-title">📑 ${escHtml(label)}</span>
+      <button class="relation-remove" onclick="removeOvRelation(${i})" type="button">×</button>
+    </div>`;
+  }).join('');
+}
+function saveOverviewEdit() {
+  const ov  = overviews[currentOvEditKey] || {};
+  ov.intro  = document.getElementById('overview-intro-input').value.trim();
+  ov.relations = [...ovEditorRelations];
+  overviews[currentOvEditKey] = ov;
+  saveData();
+  closeOverviewEditModal();
+  const [k, id] = currentOvEditKey.split(':');
+  openOverview(k, id);
+}
+
+// ════════════════════════════════════════
+//  EDITOR MODAL
+// ════════════════════════════════════════
 function openEditorModal(id = null) {
-  editingPieceId = id;
-  editorTags = [];
-  editorRelations = [];
-  editorComments = [];
-  editorType = 'article';
+  editingPieceId        = id;
+  editorTags            = [];
+  editorRelations       = [];
+  editorComments        = [];
+  editorType            = 'article';
+  editorCategories      = [];
+  editorImageData       = null;
+  editorCollectionImages= [];
+  mdMode                = 'write';
 
   document.getElementById('editor-modal-title').textContent = id ? 'Edit piece' : 'New piece';
-  document.getElementById('editor-title').value = '';
+  document.getElementById('editor-title').value   = '';
   document.getElementById('editor-content').value = '';
-  document.getElementById('editor-source').value = '';
-  document.getElementById('image-url-row').style.display = 'none';
+  document.getElementById('editor-source').value  = '';
+  document.getElementById('image-url-row').style.display   = 'none';
+  document.getElementById('collection-row').style.display  = 'none';
+  document.getElementById('content-row').style.display     = 'block';
   resetImageUI();
+  setMdMode('write');
 
-  // Populate relations dropdown
-  const relSel = document.getElementById('relation-piece-select');
-  relSel.innerHTML = '<option value="">— pick a piece —</option>' + pieces
-    .filter(p => p.id !== id)
-    .map(p => `<option value="${p.id}">${typeIcon(p.type)} ${escHtml(p.title)}</option>`)
-    .join('');
+  // Populate relation picker
+  document.getElementById('relation-piece-select').innerHTML =
+    '<option value="">— pick a piece —</option>' +
+    pieces.filter(p => p.id !== id)
+          .map(p => `<option value="${p.id}">${typeIcon(p.type)} ${escHtml(p.title)}</option>`).join('');
 
   if (id) {
     const p = pieces.find(x => x.id === id);
     if (p) {
       selectType(p.type);
-      document.getElementById('editor-title').value = p.title;
+      document.getElementById('editor-title').value   = p.title;
       document.getElementById('editor-content').value = p.content || '';
-      document.getElementById('editor-source').value = p.source || '';
-      document.getElementById('editor-category').value = p.category || '';
-      editorTags = [...(p.tags || [])];
-      editorRelations = [...(p.relations || [])];
-      editorComments = [...(p.comments || [])];
+      document.getElementById('editor-source').value  = p.source  || '';
+      editorCategories = [...(p.categories||[])];
+      editorTags       = [...(p.tags||[])];
+      editorRelations  = [...(p.relations||[])];
+      editorComments   = [...(p.comments||[])];
+
       if (p.type === 'image') {
         document.getElementById('image-url-row').style.display = 'block';
-        if (p.imageData) {
-          editorImageData = p.imageData;
-          showImagePreview(p.imageData);
-        } else if (p.imageUrl) {
-          document.getElementById('editor-image-url').value = p.imageUrl;
-          showImagePreview(p.imageUrl);
-        }
+        if (p.imageData)      { editorImageData = p.imageData; showImagePreview(p.imageData); }
+        else if (p.imageUrl)  { document.getElementById('editor-image-url').value = p.imageUrl; showImagePreview(p.imageUrl); }
+      }
+      if (p.type === 'collection') {
+        document.getElementById('collection-row').style.display = 'block';
+        editorCollectionImages = (p.collectionImages||[]).map(img => ({...img}));
+        renderCollectionImagesUI();
       }
     }
   } else {
     selectType('article');
   }
 
+  renderCatMultiList();
   renderTagsUI();
   renderRelationsUI();
   renderCommentsUI();
   renderSidebar();
-
   document.getElementById('editor-modal').style.display = 'flex';
-  document.getElementById('editor-title').focus();
+  setTimeout(() => document.getElementById('editor-title').focus(), 50);
 }
 
-function closeEditorModal() {
-  document.getElementById('editor-modal').style.display = 'none';
-  editingPieceId = null;
-}
+function closeEditorModal() { document.getElementById('editor-modal').style.display = 'none'; editingPieceId = null; }
 
 function selectType(type) {
   editorType = type;
-  document.querySelectorAll('.type-option').forEach(el => {
-    el.classList.toggle('selected', el.dataset.type === type);
-  });
-  document.getElementById('image-url-row').style.display = type === 'image' ? 'block' : 'none';
+  document.querySelectorAll('.type-option').forEach(el => el.classList.toggle('selected', el.dataset.type === type));
+  document.getElementById('image-url-row').style.display  = type === 'image'      ? 'block' : 'none';
+  document.getElementById('collection-row').style.display = type === 'collection' ? 'block' : 'none';
+  document.getElementById('content-row').style.display    = 'block';
 }
 
-// TAGS
+// ─── MARKDOWN TOOLBAR ───
+function setMdMode(mode) {
+  mdMode = mode;
+  const ta      = document.getElementById('editor-content');
+  const pane    = document.getElementById('md-preview-pane');
+  const toolbar = document.getElementById('md-toolbar');
+  document.getElementById('md-write-btn').classList.toggle('active',      mode === 'write');
+  document.getElementById('md-preview-btn-el').classList.toggle('active', mode === 'preview');
+  if (mode === 'preview') {
+    pane.innerHTML = renderMd(ta.value);
+    pane.style.display    = 'block';
+    ta.style.display      = 'none';
+    toolbar.style.display = 'none';
+  } else {
+    pane.style.display    = 'none';
+    ta.style.display      = 'block';
+    toolbar.style.display = 'flex';
+    ta.focus();
+  }
+}
+
+function mdInsert(before, after, placeholder) {
+  if (mdMode === 'preview') setMdMode('write');
+  const ta  = document.getElementById('editor-content');
+  ta.focus();
+  const s   = ta.selectionStart, e = ta.selectionEnd;
+  const sel = ta.value.substring(s, e) || (placeholder || '');
+  ta.value  = ta.value.substring(0, s) + before + sel + after + ta.value.substring(e);
+  ta.selectionStart = s + before.length;
+  ta.selectionEnd   = s + before.length + sel.length;
+}
+
+function mdInsertLine(prefix) {
+  if (mdMode === 'preview') setMdMode('write');
+  const ta  = document.getElementById('editor-content');
+  ta.focus();
+  const s   = ta.selectionStart;
+  const lineStart = ta.value.lastIndexOf('\n', s - 1) + 1;
+  ta.value  = ta.value.substring(0, lineStart) + prefix + ta.value.substring(lineStart);
+  ta.selectionStart = ta.selectionEnd = s + prefix.length;
+}
+
+function mdInsertTable() {
+  mdInsert(
+    '\n| Column 1 | Column 2 | Column 3 |\n|----------|----------|----------|\n| Cell     | Cell     | Cell     |\n| Cell     | Cell     | Cell     |\n',
+    '', ''
+  );
+}
+
+// ─── MULTI-CATEGORY ───
+function renderCatMultiList() {
+  const list = document.getElementById('cat-multi-list');
+  if (!categories.length) {
+    list.innerHTML = '<p style="font-size:12px;color:var(--muted);padding:6px 8px">No categories yet.</p>';
+    return;
+  }
+  list.innerHTML = categories.map(cat => `
+    <label class="cat-multi-item">
+      <input type="checkbox" value="${cat.id}" ${editorCategories.includes(cat.id) ? 'checked' : ''} onchange="toggleEditorCat('${cat.id}',this.checked)">
+      <span class="cat-dot" style="background:${cat.color}"></span>
+      <span>${escHtml(cat.name)}</span>
+    </label>`).join('');
+}
+function toggleEditorCat(id, checked) {
+  if (checked && !editorCategories.includes(id)) editorCategories.push(id);
+  else if (!checked) editorCategories = editorCategories.filter(x => x !== id);
+}
+
+// ─── TAGS ───
 function handleTagInput(e) {
   if (e.key === 'Enter' || e.key === ',') {
     e.preventDefault();
     const val = e.target.value.trim().replace(/,$/, '');
-    if (val && !editorTags.includes(val)) {
-      editorTags.push(val);
-      renderTagsUI();
-    }
+    if (val && !editorTags.includes(val)) { editorTags.push(val); renderTagsUI(); }
     e.target.value = '';
   }
 }
-
-function removeTag(tag) {
-  editorTags = editorTags.filter(t => t !== tag);
-  renderTagsUI();
-}
-
+function removeTag(tag) { editorTags = editorTags.filter(t => t !== tag); renderTagsUI(); }
 function renderTagsUI() {
   const container = document.getElementById('tags-container');
-  const input = document.getElementById('tag-input');
+  const input     = document.getElementById('tag-input');
   container.innerHTML = '';
   editorTags.forEach(tag => {
     const span = document.createElement('span');
     span.className = 'tag-item';
-    span.innerHTML = `${escHtml(tag)} <button class="tag-remove" onclick="removeTag('${escHtml(tag)}')" type="button">×</button>`;
+    span.innerHTML = `${escHtml(tag)}<button class="tag-remove" onclick="removeTag('${escHtml(tag)}')" type="button">×</button>`;
     container.appendChild(span);
   });
   container.appendChild(input);
   input.value = '';
 }
 
-// RELATIONS
+// ─── RELATIONS ───
 function addRelation() {
-  const type = document.getElementById('relation-type-select').value;
-  const pieceId = document.getElementById('relation-piece-select').value;
+  const type   = document.getElementById('relation-type-select').value;
+  const pieceId= document.getElementById('relation-piece-select').value;
   if (!pieceId) return;
   if (editorRelations.find(r => r.pieceId === pieceId && r.relationType === type)) return;
   editorRelations.push({ relationType: type, pieceId });
   renderRelationsUI();
 }
-
 function removeRelation(pieceId, relationType) {
   editorRelations = editorRelations.filter(r => !(r.pieceId === pieceId && r.relationType === relationType));
   renderRelationsUI();
 }
-
 function renderRelationsUI() {
-  const list = document.getElementById('relations-list');
-  list.innerHTML = editorRelations.map(r => {
+  document.getElementById('relations-list').innerHTML = editorRelations.map(r => {
     const p = pieces.find(x => x.id === r.pieceId);
-    return `
-      <div class="relation-item">
-        <span class="relation-label">${r.relationType}</span>
-        <span class="relation-title">${p ? typeIcon(p.type) + ' ' + escHtml(p.title) : 'Unknown'}</span>
-        <button class="relation-remove" onclick="removeRelation('${r.pieceId}','${r.relationType}')" type="button">×</button>
-      </div>`;
+    return `<div class="relation-item">
+      <span class="relation-label">${escHtml(r.relationType)}</span>
+      <span class="relation-title">${p ? typeIcon(p.type) + ' ' + escHtml(p.title) : 'Unknown'}</span>
+      <button class="relation-remove" onclick="removeRelation('${r.pieceId}','${r.relationType}')" type="button">×</button>
+    </div>`;
   }).join('');
 }
 
-// COMMENTS
+// ─── COMMENTS ───
 function addComment() {
   const input = document.getElementById('new-comment-input');
-  const text = input.value.trim();
+  const text  = input.value.trim();
   if (!text) return;
   editorComments.push({ text, createdAt: Date.now() });
   input.value = '';
   renderCommentsUI();
 }
-
-function removeComment(index) {
-  editorComments.splice(index, 1);
-  renderCommentsUI();
-}
-
+function removeComment(i) { editorComments.splice(i, 1); renderCommentsUI(); }
 function renderCommentsUI() {
-  const list = document.getElementById('comments-list');
-  list.innerHTML = editorComments.map((c, i) => `
+  document.getElementById('comments-list').innerHTML = editorComments.map((c, i) => `
     <div class="comment-item">
       <button class="comment-delete" onclick="removeComment(${i})" type="button">×</button>
       <div class="comment-meta">Annotation · ${new Date(c.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div>
       <div class="comment-text">${escHtml(c.text)}</div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
-// SAVE
+// ─── SINGLE IMAGE ───
+function handleImageFile(e)  { const f = e.target.files[0]; if (f) readImageFile(f); }
+function handleImageDrop(e)  { e.preventDefault(); document.getElementById('image-drop-zone').classList.remove('drag-over'); const f = e.dataTransfer.files[0]; if (f && f.type.startsWith('image/')) readImageFile(f); }
+function readImageFile(file) {
+  const r = new FileReader();
+  r.onload = ev => { editorImageData = ev.target.result; document.getElementById('editor-image-url').value = ''; showImagePreview(editorImageData); };
+  r.readAsDataURL(file);
+}
+function handleImageUrlInput(url) { if (url) { editorImageData = null; showImagePreview(url); } else clearImage(); }
+function showImagePreview(src) {
+  const img = document.getElementById('image-preview-img');
+  img.src   = src;
+  img.onload  = () => document.getElementById('image-preview-container').style.display = 'block';
+  img.onerror = () => document.getElementById('image-preview-container').style.display = 'none';
+}
+function clearImage()    { editorImageData = null; document.getElementById('editor-image-url').value = ''; const fi = document.getElementById('image-file-input'); if(fi) fi.value=''; document.getElementById('image-preview-container').style.display='none'; document.getElementById('image-preview-img').src=''; }
+function resetImageUI()  { clearImage(); }
+
+// ─── COLLECTION IMAGES ───
+function handleCollectionFiles(e) { [...e.target.files].forEach(f => readCollectionImage(f)); e.target.value = ''; }
+function handleCollectionDrop(e) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  [...e.dataTransfer.files].filter(f => f.type.startsWith('image/')).forEach(f => readCollectionImage(f));
+}
+function readCollectionImage(file) {
+  const r = new FileReader();
+  r.onload = ev => { editorCollectionImages.push({ data: ev.target.result, url: '', caption: '', tags: [] }); renderCollectionImagesUI(); };
+  r.readAsDataURL(file);
+}
+function removeCollectionImage(i)       { editorCollectionImages.splice(i, 1); renderCollectionImagesUI(); }
+function updateCollectionCaption(i, v)  { editorCollectionImages[i].caption = v; }
+function addCollectionImageTag(i, e) {
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    const val = e.target.value.trim().replace(/,$/, '');
+    if (val && !(editorCollectionImages[i].tags||[]).includes(val)) {
+      editorCollectionImages[i].tags = editorCollectionImages[i].tags || [];
+      editorCollectionImages[i].tags.push(val);
+      renderCollectionImagesUI();
+    }
+    e.target.value = '';
+  }
+}
+function removeCollectionImageTag(i, t) { editorCollectionImages[i].tags = (editorCollectionImages[i].tags||[]).filter(x => x !== t); renderCollectionImagesUI(); }
+function renderCollectionImagesUI() {
+  document.getElementById('collection-images-list').innerHTML = editorCollectionImages.map((img, i) => {
+    const src      = img.data || img.url;
+    const tagPills = (img.tags||[]).map(t => `<span class="img-tag-pill">${escHtml(t)}<button onclick="removeCollectionImageTag(${i},'${escHtml(t)}')" type="button">×</button></span>`).join('');
+    return `<div class="collection-image-row">
+      ${src ? `<img class="collection-image-thumb" src="${src}" alt="">` : '<div class="collection-image-thumb-placeholder">🖼️</div>'}
+      <div class="collection-image-info">
+        <input class="collection-image-caption" value="${escHtml(img.caption||'')}" placeholder="Caption (optional)…" oninput="updateCollectionCaption(${i},this.value)">
+        <div class="collection-image-tags-row">
+          ${tagPills}
+          <input class="img-tag-input" placeholder="tag + Enter" onkeydown="addCollectionImageTag(${i},event)">
+        </div>
+      </div>
+      <button class="collection-image-remove" onclick="removeCollectionImage(${i})" type="button">×</button>
+    </div>`;
+  }).join('');
+}
+
+// ─── SAVE PIECE ───
 function savePiece() {
   const title = document.getElementById('editor-title').value.trim();
   if (!title) { alert('Please add a title.'); return; }
-
-  const now = Date.now();
+  const now   = Date.now();
   const piece = {
-    id: editingPieceId || 'p_' + now + '_' + Math.random().toString(36).substr(2,6),
-    type: editorType,
+    id:               editingPieceId || 'p_' + now + '_' + Math.random().toString(36).substr(2,6),
+    type:             editorType,
     title,
-    content: document.getElementById('editor-content').value.trim(),
-    source: document.getElementById('editor-source').value.trim(),
-    imageData: editorType === 'image' ? (editorImageData || null) : null,
-    imageUrl: editorType === 'image' ? (editorImageData ? '' : document.getElementById('editor-image-url').value.trim()) : '',
-    category: document.getElementById('editor-category').value || '',
-    tags: [...editorTags],
-    relations: [...editorRelations],
-    comments: [...editorComments],
-    createdAt: editingPieceId ? (pieces.find(p => p.id === editingPieceId)?.createdAt || now) : now,
-    updatedAt: now
+    content:          document.getElementById('editor-content').value.trim(),
+    source:           document.getElementById('editor-source').value.trim(),
+    imageData:        editorType === 'image' ? (editorImageData || null) : null,
+    imageUrl:         editorType === 'image' ? (editorImageData ? '' : document.getElementById('editor-image-url').value.trim()) : '',
+    collectionImages: editorType === 'collection' ? editorCollectionImages.map(img => ({...img})) : [],
+    categories:       [...editorCategories],
+    tags:             [...editorTags],
+    relations:        [...editorRelations],
+    comments:         [...editorComments],
+    createdAt:        editingPieceId ? (pieces.find(p => p.id === editingPieceId)?.createdAt || now) : now,
+    updatedAt:        now
   };
-
-  if (editingPieceId) {
-    const idx = pieces.findIndex(p => p.id === editingPieceId);
-    if (idx > -1) pieces[idx] = piece;
-  } else {
-    pieces.unshift(piece);
-  }
-
-  saveData();
-  closeEditorModal();
-  renderPieces();
+  if (editingPieceId) { const idx = pieces.findIndex(p => p.id === editingPieceId); if (idx > -1) pieces[idx] = piece; }
+  else pieces.unshift(piece);
+  saveData(); closeEditorModal(); renderPieces();
 }
 
-// ═══════════════════════════════════════════
+// ════════════════════════════════════════
 //  CATEGORY MODAL
-// ═══════════════════════════════════════════
-
-function openCategoryModal() {
-  selectedCatColor = CAT_COLORS[0];
+// ════════════════════════════════════════
+function openCategoryModal(fromEditor = false) {
+  catModalFromEditor = fromEditor;
+  selectedCatColor   = CAT_COLORS[0];
   document.getElementById('cat-name-input').value = '';
-  const picker = document.getElementById('cat-color-picker');
-  picker.innerHTML = CAT_COLORS.map((c, i) => `
-    <div class="color-dot ${i === 0 ? 'selected' : ''}" style="background:${c}" onclick="selectCatColor('${c}', this)"></div>
-  `).join('');
+  document.getElementById('cat-color-picker').innerHTML = CAT_COLORS.map((c, i) =>
+    `<div class="color-dot ${i===0?'selected':''}" style="background:${c}" onclick="selectCatColor('${c}',this)"></div>`
+  ).join('');
   document.getElementById('cat-modal').style.display = 'flex';
-  document.getElementById('cat-name-input').focus();
+  setTimeout(() => document.getElementById('cat-name-input').focus(), 50);
 }
-
-function closeCategoryModal() {
-  document.getElementById('cat-modal').style.display = 'none';
-}
-
+function closeCategoryModal() { document.getElementById('cat-modal').style.display = 'none'; catModalFromEditor = false; }
 function selectCatColor(color, el) {
   selectedCatColor = color;
   document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('selected'));
   el.classList.add('selected');
 }
-
 function saveCategory() {
   const name = document.getElementById('cat-name-input').value.trim();
   if (!name) { alert('Please enter a category name.'); return; }
-  categories.push({ id: 'cat_' + Date.now(), name, color: selectedCatColor });
+  const newCat = { id: 'cat_' + Date.now(), name, color: selectedCatColor };
+  categories.push(newCat);
   saveData();
   closeCategoryModal();
   renderSidebar();
+  if (catModalFromEditor) { editorCategories.push(newCat.id); renderCatMultiList(); }
 }
 
-// ═══════════════════════════════════════════
-//  EXPORT / IMPORT
-// ═══════════════════════════════════════════
-
-function exportData() {
-  const data = { pieces, categories, exportedAt: new Date().toISOString() };
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'library_export_' + new Date().toISOString().split('T')[0] + '.json';
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-function importData() {
-  document.getElementById('import-file').click();
-}
-
-function handleImport(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      const data = JSON.parse(e.target.result);
-      if (!Array.isArray(data.pieces)) throw new Error('Invalid format');
-      if (confirm(`Import ${data.pieces.length} pieces and ${(data.categories||[]).length} categories? This will merge with existing data.`)) {
-        // Merge: add only pieces/cats that don't already exist by ID
-        const existingIds = new Set(pieces.map(p => p.id));
-        const newPieces = data.pieces.filter(p => !existingIds.has(p.id));
-        pieces = [...pieces, ...newPieces];
-        const existingCatIds = new Set(categories.map(c => c.id));
-        const newCats = (data.categories || []).filter(c => !existingCatIds.has(c.id));
-        categories = [...categories, ...newCats];
-        saveData();
-        renderPieces();
-      }
-    } catch(err) {
-      alert('Import failed: invalid JSON file.');
-    }
-  };
-  reader.readAsText(file);
-  event.target.value = '';
-}
-
-// ═══════════════════════════════════════════
-//  UTILITIES
-// ═══════════════════════════════════════════
-
-function escHtml(str) {
-  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function modalOverlayClick(event, modalId) {
-  if (event.target.id === modalId) {
-    if (modalId === 'editor-modal') closeEditorModal();
-    if (modalId === 'cat-modal') closeCategoryModal();
-  }
-}
-
-// Keyboard shortcuts
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    if (document.getElementById('lightbox').style.display !== 'none') { closeLightbox(); return; }
-    if (document.getElementById('editor-modal').style.display !== 'none') closeEditorModal();
-    else if (document.getElementById('cat-modal').style.display !== 'none') closeCategoryModal();
-    else if (document.getElementById('detail-view').style.display !== 'none') closeDetail();
-  }
-  if ((e.metaKey || e.ctrlKey) && e.key === 'n') {
-    e.preventDefault();
-    openEditorModal();
-  }
-});
-
-// ═══════════════════════════════════════════
+// ════════════════════════════════════════
 //  LIGHTBOX
-// ═══════════════════════════════════════════
-
-function openLightbox(src) {
-  const lb = document.getElementById('lightbox');
+// ════════════════════════════════════════
+function openLightbox(src, caption) {
+  if (!src) return;
   document.getElementById('lightbox-img').src = src;
-  lb.style.display = 'flex';
+  const capEl = document.getElementById('lightbox-caption');
+  capEl.textContent  = caption || '';
+  capEl.style.display = caption ? 'block' : 'none';
+  document.getElementById('lightbox').style.display = 'flex';
   document.body.style.overflow = 'hidden';
 }
-
 function closeLightbox() {
   document.getElementById('lightbox').style.display = 'none';
   document.getElementById('lightbox-img').src = '';
   document.body.style.overflow = '';
 }
 
-// ═══════════════════════════════════════════
-//  IMAGE UPLOAD
-// ═══════════════════════════════════════════
-
-let editorImageData = null; // base64 data URI or null
-
-function handleImageFile(event) {
-  const file = event.target.files[0];
-  if (file) readImageFile(file);
+// ════════════════════════════════════════
+//  EXPORT / IMPORT
+// ════════════════════════════════════════
+function exportData() {
+  const blob = new Blob([JSON.stringify({ pieces, categories, overviews, exportedAt: new Date().toISOString() }, null, 2)], { type: 'application/json' });
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
+  a.download = 'lenses_export_' + new Date().toISOString().split('T')[0] + '.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
 }
-
-function handleImageDrop(event) {
-  event.preventDefault();
-  document.getElementById('image-drop-zone').classList.remove('drag-over');
-  const file = event.dataTransfer.files[0];
-  if (file && file.type.startsWith('image/')) readImageFile(file);
-}
-
-function readImageFile(file) {
-  const reader = new FileReader();
-  reader.onload = e => {
-    editorImageData = e.target.result; // base64 data URI
-    document.getElementById('editor-image-url').value = '';
-    showImagePreview(editorImageData);
+function importData() { document.getElementById('import-file').click(); }
+function handleImport(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (!Array.isArray(data.pieces)) throw new Error();
+      if (!confirm(`Import ${data.pieces.length} pieces and ${(data.categories||[]).length} categories? New items will be merged.`)) return;
+      const eIds = new Set(pieces.map(p => p.id));
+      pieces     = [...pieces, ...data.pieces.filter(p => !eIds.has(p.id))];
+      const eCat = new Set(categories.map(c => c.id));
+      categories = [...categories, ...(data.categories||[]).filter(c => !eCat.has(c.id))];
+      if (data.overviews) overviews = { ...data.overviews, ...overviews };
+      saveData(); renderPieces();
+    } catch(err) { alert('Import failed: invalid JSON file.'); }
   };
-  reader.readAsDataURL(file);
+  r.readAsText(file);
+  e.target.value = '';
 }
 
-function handleImageUrlInput(url) {
-  if (url) {
-    editorImageData = null; // URL takes precedence, clear any uploaded data
-    showImagePreview(url);
-  } else {
-    clearImage();
+// ════════════════════════════════════════
+//  MISC / KEYBOARD
+// ════════════════════════════════════════
+function modalOverlayClick(e, id) {
+  if (e.target.id !== id) return;
+  if (id === 'editor-modal')       closeEditorModal();
+  if (id === 'cat-modal')          closeCategoryModal();
+  if (id === 'overview-edit-modal') closeOverviewEditModal();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    if (document.getElementById('lightbox').style.display !== 'none')            { closeLightbox(); return; }
+    if (document.getElementById('overview-edit-modal').style.display !== 'none') { closeOverviewEditModal(); return; }
+    if (document.getElementById('editor-modal').style.display !== 'none')        { closeEditorModal(); return; }
+    if (document.getElementById('cat-modal').style.display !== 'none')           { closeCategoryModal(); return; }
+    if (document.getElementById('overview-view').style.display !== 'none')       { closeOverview(); return; }
+    if (document.getElementById('detail-view').style.display !== 'none')         { closeDetail(); return; }
   }
-}
+  if ((e.metaKey || e.ctrlKey) && e.key === 'n') { e.preventDefault(); openEditorModal(); }
+});
 
-function showImagePreview(src) {
-  const img = document.getElementById('image-preview-img');
-  img.src = src;
-  img.onerror = () => {
-    document.getElementById('image-preview-container').style.display = 'none';
-  };
-  img.onload = () => {
-    document.getElementById('image-preview-container').style.display = 'block';
-  };
-}
-
-function clearImage() {
-  editorImageData = null;
-  document.getElementById('editor-image-url').value = '';
-  document.getElementById('editor-image-file-input') && (document.getElementById('image-file-input').value = '');
-  document.getElementById('image-preview-container').style.display = 'none';
-  document.getElementById('image-preview-img').src = '';
-}
-
-function resetImageUI() {
-  editorImageData = null;
-  document.getElementById('editor-image-url').value = '';
-  document.getElementById('image-file-input').value = '';
-  document.getElementById('image-preview-container').style.display = 'none';
-  document.getElementById('image-preview-img').src = '';
-}
-
-// Bootstrap
+// ════════════════════════════════════════
+//  BOOT
+// ════════════════════════════════════════
 loadData();
 renderPieces();
 </script>
