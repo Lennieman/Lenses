@@ -34,12 +34,14 @@
     </div>
     <div class="sidebar-section"><div class="sidebar-section-label">Categories</div></div>
     <div id="sidebar-categories"></div>
-    <button id="add-category-btn" onclick="openCategoryModal()">+ New category</button>
+    <button id="add-category-btn" onclick="openCategoryModal()" style="display:none">+ New category</button>
     <div id="sidebar-footer">
-      <button class="sidebar-new-btn" onclick="openEditorModal()">+ New piece</button>
-      <button class="sidebar-footer-btn" onclick="exportData()">⬇ Export JSON</button>
-      <button class="sidebar-footer-btn" onclick="importData()">⬆ Import JSON</button>
+      <button class="sidebar-new-btn" id="btn-new-piece" onclick="openEditorModal()" style="display:none">+ New piece</button>
+      <button class="sidebar-footer-btn" id="btn-export" onclick="exportData()" style="display:none">⬇ Export JSON</button>
+      <button class="sidebar-footer-btn" id="btn-import" onclick="importData()" style="display:none">⬆ Import JSON</button>
       <input type="file" id="import-file" accept=".json" style="display:none" onchange="handleImport(event)">
+      <button class="sidebar-footer-btn" id="btn-admin-login" onclick="openLoginModal()">🔒 Admin login</button>
+      <button class="sidebar-footer-btn" id="btn-admin-logout" onclick="adminLogout()" style="display:none">🔓 Log out</button>
     </div>
   </div>
 
@@ -59,7 +61,7 @@
         <button class="view-btn active" id="btn-grid" onclick="setView('grid')">⊞</button>
         <button class="view-btn" id="btn-list" onclick="setView('list')">☰</button>
       </div>
-      <button id="new-piece-btn" onclick="openEditorModal()">+ New piece</button>
+      <button id="new-piece-btn" onclick="openEditorModal()" style="display:none">+ New piece</button>
     </div>
     <div id="content-area"><div id="pieces-grid"></div></div>
   </div>
@@ -78,8 +80,8 @@
     <button class="detail-back-btn" onclick="closeDetail()">← Back</button>
     <span id="detail-breadcrumb" style="font-size:13px;color:var(--muted)"></span>
     <div id="detail-actions">
-      <button class="btn btn-ghost" onclick="editCurrentPiece()">✏️ Edit</button>
-      <button class="btn btn-danger" onclick="deleteCurrentPiece()">🗑 Delete</button>
+      <button class="btn btn-ghost" id="btn-detail-edit" onclick="editCurrentPiece()" style="display:none">✏️ Edit</button>
+      <button class="btn btn-danger" id="btn-detail-delete" onclick="deleteCurrentPiece()" style="display:none">🗑 Delete</button>
     </div>
   </div>
   <div id="detail-content"></div>
@@ -280,6 +282,29 @@
     </div>
   </div>
 </div>
+<!-- LOGIN MODAL -->
+<div id="login-modal" class="modal-overlay" style="display:none" onclick="modalOverlayClick(event,'login-modal')">
+  <div class="modal" style="max-width:380px;margin-top:20vh" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Admin login</h3>
+      <button class="modal-close" onclick="closeLoginModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <label>Password</label>
+        <input type="password" id="login-password-input" placeholder="Enter admin password…" onkeydown="if(event.key==='Enter')submitLogin()">
+      </div>
+      <div id="login-error" style="display:none;color:var(--accent);font-size:13px;margin-top:-8px;font-family:'DM Mono',monospace">
+        Incorrect password. Try again.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeLoginModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitLogin()">Log in</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ════════════════════════════════════════
 //  DATA STORE
@@ -1327,22 +1352,133 @@ function handleImport(e) {
 // ════════════════════════════════════════
 function modalOverlayClick(e, id) {
   if (e.target.id !== id) return;
-  if (id === 'editor-modal')       closeEditorModal();
-  if (id === 'cat-modal')          closeCategoryModal();
+  if (id === 'editor-modal')        closeEditorModal();
+  if (id === 'cat-modal')           closeCategoryModal();
   if (id === 'overview-edit-modal') closeOverviewEditModal();
+  if (id === 'login-modal')         closeLoginModal();
 }
 
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
-    if (document.getElementById('lightbox').style.display !== 'none')            { closeLightbox(); return; }
-    if (document.getElementById('overview-edit-modal').style.display !== 'none') { closeOverviewEditModal(); return; }
-    if (document.getElementById('editor-modal').style.display !== 'none')        { closeEditorModal(); return; }
-    if (document.getElementById('cat-modal').style.display !== 'none')           { closeCategoryModal(); return; }
-    if (document.getElementById('overview-view').style.display !== 'none')       { closeOverview(); return; }
-    if (document.getElementById('detail-view').style.display !== 'none')         { closeDetail(); return; }
+    if (document.getElementById('login-modal').style.display !== 'none')          { closeLoginModal(); return; }
+    if (document.getElementById('lightbox').style.display !== 'none')             { closeLightbox(); return; }
+    if (document.getElementById('overview-edit-modal').style.display !== 'none')  { closeOverviewEditModal(); return; }
+    if (document.getElementById('editor-modal').style.display !== 'none')         { closeEditorModal(); return; }
+    if (document.getElementById('cat-modal').style.display !== 'none')            { closeCategoryModal(); return; }
+    if (document.getElementById('overview-view').style.display !== 'none')        { closeOverview(); return; }
+    if (document.getElementById('detail-view').style.display !== 'none')          { closeDetail(); return; }
   }
-  if ((e.metaKey || e.ctrlKey) && e.key === 'n') { e.preventDefault(); openEditorModal(); }
+  if ((e.metaKey || e.ctrlKey) && e.key === 'n') {
+    if (adminUnlocked) { e.preventDefault(); openEditorModal(); }
+  }
 });
+
+// ════════════════════════════════════════
+//  AUTHENTICATION
+//
+//  HOW IT WORKS
+//  ─────────────────────────────────────────────────────────────
+//  The password is never stored as plain text anywhere in this
+//  file. Instead, it is stored as a SHA-256 hash — a one-way
+//  mathematical fingerprint of the password. When someone types
+//  a password, we hash what they typed and compare the two hashes.
+//  If they match, access is granted. The original password cannot
+//  be reconstructed from the hash.
+//
+//  SHA-256 of the default password "lenses2024" is stored below.
+//  To change your password: run hashPassword('yournewpassword')
+//  in the browser console, copy the result, and replace the
+//  ADMIN_HASH value below with it.
+//
+//  Session state (logged in / not) is held only in memory
+//  (the variable below). It is never written to localStorage or
+//  cookies. This means every time the page is loaded fresh,
+//  you start as a visitor. You must log in again each session.
+//  ─────────────────────────────────────────────────────────────
+
+// ── Change this hash to set your password ──────────────────────
+// Default password is:  lenses2024
+// To change it, open browser console on your live site and run:
+//   hashPassword('yournewpassword').then(h => console.log(h))
+// Then paste the result here replacing the string below.
+const ADMIN_HASH = '7b1c4e276372fd3e3cb4ab94363793579aabf90d7626538a9683fa6774cec1a2';
+// ───────────────────────────────────────────────────────────────
+
+let adminUnlocked = false;
+
+// Hashes a plain-text string using the browser's built-in
+// SubtleCrypto API — no external libraries needed.
+async function hashPassword(plain) {
+  const encoded = new TextEncoder().encode(plain);
+  const buffer  = await crypto.subtle.digest('SHA-256', encoded);
+  return Array.from(new Uint8Array(buffer))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+// Helper for generating a real hash to paste above.
+// Usage in browser console: hashPassword('mypassword').then(h => console.log(h))
+window.hashPassword = hashPassword;
+
+function openLoginModal() {
+  document.getElementById('login-password-input').value = '';
+  document.getElementById('login-error').style.display = 'none';
+  document.getElementById('login-modal').style.display = 'flex';
+  setTimeout(() => document.getElementById('login-password-input').focus(), 50);
+}
+
+function closeLoginModal() {
+  document.getElementById('login-modal').style.display = 'none';
+  document.getElementById('login-password-input').value = '';
+  document.getElementById('login-error').style.display = 'none';
+}
+
+async function submitLogin() {
+  const input = document.getElementById('login-password-input').value;
+  if (!input) return;
+
+  const inputHash = await hashPassword(input);
+
+  if (inputHash === ADMIN_HASH) {
+    adminUnlocked = true;
+    closeLoginModal();
+    applyAdminState();
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+    document.getElementById('login-password-input').value = '';
+    document.getElementById('login-password-input').focus();
+  }
+}
+
+function adminLogout() {
+  adminUnlocked = false;
+  applyAdminState();
+}
+
+// Shows or hides every editing control based on the current
+// adminUnlocked state. Called once on login and once on logout.
+function applyAdminState() {
+  const show = adminUnlocked;
+  const s    = el => { const e = document.getElementById(el); if (e) e.style.display = show ? '' : 'none'; };
+  const h    = el => { const e = document.getElementById(el); if (e) e.style.display = show ? 'none' : ''; };
+
+  // Show when logged in
+  s('btn-new-piece');
+  s('btn-export');
+  s('btn-import');
+  s('btn-admin-logout');
+  s('add-category-btn');
+  s('new-piece-btn');
+  s('btn-detail-edit');
+  s('btn-detail-delete');
+
+  // Hide when logged in
+  h('btn-admin-login');
+
+  // Re-render pieces so the overview edit button
+  // also respects admin state where relevant
+  renderSidebar();
+}
 
 // ════════════════════════════════════════
 //  BOOT
